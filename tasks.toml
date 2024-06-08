@@ -1,0 +1,11 @@
+[tool.poe.tasks.lint]
+default_item_type = "cmd"
+ignore_fail = "return_non_zero"
+sequence = [
+    "poetry run ruff check",
+    "poetry run pyright"
+]
+
+[tool.poe.tasks.run]
+env = {POETRY_CONFIG_DIR = "${PWD}/sandbox"}
+cmd = "poetry"

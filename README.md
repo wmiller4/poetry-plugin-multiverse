@@ -24,15 +24,10 @@ Poetry must be running on Python 3.8 or later.
 
 In addition to the runtime dependencies, install Poethepoet.
 
-The Poe tasks in pyproject.toml provide a sandbox environment for testing the plugin.
+The Poe tasks in tasks.toml provide a sandbox environment for testing the plugin.
 This means you don't need to build and install the plugin during development.
+Instead of running your Poetry commands with `poetry`, use `poe run` instead:
 
-1.  Initialize the sandbox:
-    ```
-    poe lock-env
-    ```
-
-2.  Run Poetry commands in the sandbox using `poe run`:
-    ```
-    poe run workspace
-    ```
+```
+poe run workspace
+```

@@ -12,6 +12,7 @@ poetry = "^1.8"
 [tool.poetry.group.dev.dependencies]
 pyright = "^1.1.366"
 ruff = "^0.4.8"
+pytest = "^8.2.2"
 
 [tool.poetry.plugins."poetry.application.plugin"]
 multiverse = "poetry_multiverse_plugin.plugin:MultiversePlugin"

@@ -6,6 +6,9 @@ sequence = [
     "poetry run pyright"
 ]
 
+[tool.poe.tasks.test]
+cmd = "poetry run pytest tests"
+
 [tool.poe.tasks.run]
 env = {POETRY_CONFIG_DIR = "${PWD}/sandbox"}
 cmd = "poetry"

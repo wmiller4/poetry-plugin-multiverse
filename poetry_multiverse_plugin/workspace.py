@@ -17,7 +17,7 @@ def workspace_root(poetry: Poetry) -> Optional[Poetry]:
         return poetry
     try:
         parent_project = Factory().create_poetry(
-            poetry.pyproject_path.parent.parent,
+            poetry.pyproject_path.resolve().parent.parent,
             disable_cache=poetry.disable_cache
         )
         return workspace_root(parent_project)

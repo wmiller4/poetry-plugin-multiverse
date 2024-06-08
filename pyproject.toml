@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "poetry-multiverse-plugin"
+version = "0.1.0"
+description = ""
+authors = ["Wesley Miller <37603175+wmiller4@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+poetry = "^1.8"
+
+[tool.poetry.plugins."poetry.application.plugin"]
+multiverse = "poetry_multiverse_plugin.plugin:MultiversePlugin"
+
+[tool.multiverse]
+root = true
+
+[tool.poe.tasks.run]
+env = {POETRY_CONFIG_DIR = "${PWD}/sandbox"}
+cmd = "poetry"
+
+[tool.poe.tasks.lock-env]
+sequence = [
+    {cmd = "mkdir -p sandbox"},
+    {cmd = "cp sandbox.toml sandbox/pyproject.toml"},
+    {cmd = "poe run --no-plugins self lock"},
+    {cmd = "poe run --no-plugins self install --sync"}
+]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

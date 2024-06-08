@@ -1,2 +1,0 @@
-[tool.poetry.group.additional.dependencies]
-poetry-multiverse-plugin = {path = "..", develop = true}

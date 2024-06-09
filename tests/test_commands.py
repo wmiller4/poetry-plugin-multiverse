@@ -1,23 +1,23 @@
-from pathlib import Path
 
 from poetry_multiverse_plugin.commands import InfoCommand, ListCommand
-from tests.utils import command, project
+from tests.conftest import ProjectFactory
+from tests.utils import command
 
 
-def test_workspace_info(tmp_path: Path):
-    root = project(tmp_path, workspace_root=True)
+def test_workspace_info(project: ProjectFactory):
+    root = project(workspace_root=True)
     info = command(root, InfoCommand)
     assert info.execute() == 0
 
     output = info.io.fetch_output()
     assert root.package.name in output
-    assert str(tmp_path) in output
+    assert str(root.pyproject_path.parent) in output
 
 
-def test_workspace_list(tmp_path: Path):
-    root = project(tmp_path, workspace_root=True)
-    project(tmp_path / 'child1')
-    project(tmp_path / 'child2')
+def test_workspace_list(project: ProjectFactory):
+    root = project(workspace_root=True)
+    project('child1')
+    project('child2')
     info = command(root, ListCommand)
     assert info.execute() == 0
 

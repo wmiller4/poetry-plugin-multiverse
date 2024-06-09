@@ -1,14 +1,9 @@
-from cleo.commands.command import Command
-from poetry.poetry import Poetry
+from poetry.console.commands.env_command import EnvCommand
 
 from poetry_multiverse_plugin.workspace import Workspace
 
 
-class WorkspaceCommand(Command):
-    def __init__(self, poetry: Poetry) -> None:
-        super().__init__()
-        self.poetry = poetry
-
+class WorkspaceCommand(EnvCommand):
     def handle_workspace(self, workspace: Workspace) -> int:
         raise NotImplementedError
     
@@ -37,4 +32,14 @@ class ListCommand(WorkspaceCommand):
     def handle_workspace(self, workspace: Workspace) -> int:
         for child in workspace.projects:
             self.line(f'{child.package.name}')
+        return 0
+
+
+class ShowCommand(WorkspaceCommand):
+    name = 'workspace show'
+    description = 'List dependendies in the multiverse workspace.'
+
+    def handle_workspace(self, workspace: Workspace) -> int:
+        for dep in workspace.dependencies:
+            print(f'{dep.complete_pretty_name} {dep.pretty_constraint}')
         return 0

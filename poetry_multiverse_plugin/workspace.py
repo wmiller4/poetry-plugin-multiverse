@@ -1,4 +1,6 @@
+from collections import defaultdict
 from dataclasses import dataclass
+from poetry.core.packages.dependency import Dependency
 from poetry.factory import Factory
 from poetry.poetry import Poetry
 from typing import Any, Iterable, Optional
@@ -46,3 +48,16 @@ class Workspace:
                 )
             except RuntimeError:
                 print(f'Skipping pyproject.toml {pyproject}')
+    
+    @property
+    def dependencies(self) -> Iterable[Dependency]:
+        deps: dict[str, list[Dependency]] = defaultdict(list)
+        for project in (self.root, *self.projects):
+            for dep in project.package.all_requires:
+                deps[dep.complete_name].append(dep)
+
+        for package in deps.values():
+            constraint = package[0].constraint
+            for dep in package[1:]:
+                constraint = constraint.intersect(dep.constraint)
+            yield package[0].with_constraint(constraint)

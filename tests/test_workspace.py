@@ -2,6 +2,7 @@ from pathlib import Path
 from poetry_multiverse_plugin.workspace import Workspace
 from tests import utils
 from poetry.core.constraints.version.version import Version
+from poetry.core.packages.package import Package
 
 from tests.conftest import ProjectFactory
 
@@ -36,7 +37,9 @@ def test_workspace_projects(project: ProjectFactory):
 
 
 def test_dependencies(project: ProjectFactory):
-    root = project(workspace_root=True, dependencies=['click=^7'])
+    project.packages(Package('click', '7.0.9'))
+    root = project(workspace_root=True)
+    utils.add(root, 'click=^7')
     workspace = project.workspace(root)
 
     package_names = set(dep.name for dep in workspace.dependencies)
@@ -44,9 +47,13 @@ def test_dependencies(project: ProjectFactory):
 
 
 def test_dependencies_conflict(project: ProjectFactory):
+    project.packages(
+        Package('click', '7.0.9'),
+        Package('click', '8.1.2')
+    )
     workspace = project.workspace()
-    project('p1', dependencies=['click=^7'])
-    project('p2', dependencies=['click=^8'])
+    utils.add(project('p1'), 'click=^7')
+    utils.add(project('p2'), 'click=^8')
 
     conflicts = set(
         dep.complete_name for dep in workspace.dependencies
@@ -56,9 +63,13 @@ def test_dependencies_conflict(project: ProjectFactory):
 
 
 def test_dependencies_multiple(project: ProjectFactory):
+    project.packages(
+        Package('click', '8.0.9'),
+        Package('click', '8.1.2')
+    )
     workspace = project.workspace()
-    project('p1', dependencies=['click=^8.1'])
-    project('p2', dependencies=['click=^8'])
+    utils.add(project('p1'), 'click=^8.1')
+    utils.add(project('p2'), 'click=^8')
 
     resolved = dict(
         (dep.complete_name, dep)

@@ -13,6 +13,7 @@ poetry = "^1.8"
 pyright = "^1.1.366"
 ruff = "^0.4.8"
 pytest = "^8.2.2"
+pytest-cov = "^5.0.0"
 
 [tool.poetry.plugins."poetry.application.plugin"]
 multiverse = "poetry_multiverse_plugin.plugin:MultiversePlugin"
@@ -22,6 +23,9 @@ root = true
 
 [tool.poe]
 include = "tasks.toml"
+
+[tool.pytest.ini_options]
+addopts = "--cov=poetry_multiverse_plugin"
 
 [build-system]
 requires = ["poetry-core"]

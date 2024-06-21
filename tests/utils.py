@@ -53,5 +53,6 @@ def project(
     return poetry
 
     
-def add(poetry: Poetry, *requirements: str):
+def add(poetry: Poetry, *requirements: str) -> Poetry:
     assert command(poetry, AddCommand).execute(f'--lock {" ".join(requirements)}') == 0
+    return poetry

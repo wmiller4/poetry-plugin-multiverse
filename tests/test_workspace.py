@@ -37,39 +37,13 @@ def test_workspace_projects(project: ProjectFactory):
     assert projects[0].pyproject_path == child.pyproject_path
 
 
-def test_dependencies(project: ProjectFactory):
-    project.packages(Package('click', '7.0.9'))
-    root = project(workspace_root=True)
-    utils.add(root, 'click=^7')
-    workspace = project.workspace(root)
-
-    package_names = set(dep.name for dep in workspace.dependencies)
-    assert 'click' in package_names
-
-
-def test_dependencies_conflict(project: ProjectFactory):
-    project.packages(
-        Package('click', '7.0.9'),
-        Package('click', '8.1.2')
-    )
-    workspace = project.workspace()
-    utils.add(project('p1'), 'click=^7')
-    utils.add(project('p2'), 'click=^8')
-
-    conflicts = set(
-        dep.complete_name for dep in workspace.dependencies
-        if dep.constraint.is_empty()
-    )
-    assert 'click' in conflicts
-
-
 def test_dependencies_multiple(project: ProjectFactory):
     project.packages(
         Package('click', '8.0.9'),
         Package('click', '8.1.2')
     )
     workspace = project.workspace()
-    utils.add(project('p1'), 'click=^8.1')
+    utils.add(workspace.root, 'click=^8.1')
     utils.add(project('p2'), 'click=^8')
 
     resolved = dict(

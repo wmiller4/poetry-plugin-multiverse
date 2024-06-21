@@ -2,7 +2,7 @@ from typing import Type
 from poetry.console.application import Application
 from poetry.plugins.application_plugin import ApplicationPlugin
 
-from poetry_multiverse_plugin.commands import InfoCommand, ListCommand, ShowCommand, WorkspaceCommand
+from poetry_multiverse_plugin.commands import InfoCommand, ShowCommand, WorkspaceCommand
 
 
 def register(application: Application, *commands: Type[WorkspaceCommand]):
@@ -13,4 +13,4 @@ def register(application: Application, *commands: Type[WorkspaceCommand]):
 
 class MultiversePlugin(ApplicationPlugin):
     def activate(self, application: Application):
-        register(application, InfoCommand, ListCommand, ShowCommand)
+        register(application, InfoCommand, ShowCommand)

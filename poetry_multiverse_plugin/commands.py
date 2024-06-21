@@ -1,4 +1,7 @@
+from typing import List
 from poetry.console.commands.env_command import EnvCommand
+from poetry.core.packages.dependency import Dependency
+from poetry.poetry import Poetry
 
 from poetry_multiverse_plugin.workspace import Workspace
 
@@ -20,26 +23,37 @@ class InfoCommand(WorkspaceCommand):
     description = 'Describe the multiverse workspace.'
 
     def handle_workspace(self, workspace: Workspace) -> int:
-        self.line(f'Workspace {workspace.root.package.name}')
-        self.line(f'  Directory: {workspace.root.pyproject_path.parent}')
-        return 0
+        root = workspace.root
+        projects = sorted(workspace.projects, key=lambda p: p.package.name)
 
+        def format_row(project: Poetry) -> List[str]:
+            return [
+                f'<b>{project.package.name}</>',
+                str(project.pyproject_path.parent.relative_to(root.pyproject_path.parent))
+            ]
 
-class ListCommand(WorkspaceCommand):
-    name = 'workspace list'
-    description = 'List projects in the multiverse workspace.'
-
-    def handle_workspace(self, workspace: Workspace) -> int:
-        for child in workspace.projects:
-            self.line(f'{child.package.name}')
+        self.table(style='compact') \
+            .set_headers([f'{root.package.name}', str(root.pyproject_path.parent)]) \
+            .set_rows([format_row(project) for project in projects]) \
+            .render()
         return 0
 
 
 class ShowCommand(WorkspaceCommand):
     name = 'workspace show'
-    description = 'List dependendies in the multiverse workspace.'
+    description = 'List dependencies in the multiverse workspace.'
 
     def handle_workspace(self, workspace: Workspace) -> int:
-        for dep in workspace.dependencies:
-            print(f'{dep.complete_pretty_name} {dep.pretty_constraint}')
+        dependencies = sorted(workspace.dependencies, key=lambda dep: dep.complete_pretty_name)
+
+        def format_row(dep: Dependency) -> List[str]:
+            return [
+                f'<fg=cyan>{dep.complete_pretty_name}</>',
+                '<error>Conflict</>' if dep.constraint.is_empty() else f'<b>{dep.pretty_constraint}</>',
+            ]
+        
+        self.table(
+            style='compact',
+            rows=[format_row(dep) for dep in dependencies]
+        ).render()
         return 0

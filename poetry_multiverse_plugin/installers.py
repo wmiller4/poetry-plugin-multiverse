@@ -1,12 +1,13 @@
 from pathlib import Path
 from tempfile import _TemporaryFileWrapper, NamedTemporaryFile
+from typing import Optional
 from cleo.io.io import IO
 from dataclasses import dataclass, field
 from poetry.core.packages.project_package import ProjectPackage
 from poetry.installation.installer import Installer
-from poetry.poetry import Poetry
 from poetry.packages.locker import Locker
-from poetry.repositories.repository_pool import RepositoryPool
+from poetry.poetry import Poetry
+from poetry.repositories.repository_pool import RepositoryPool, Priority
 from poetry.utils.env import Env
 
 from poetry_multiverse_plugin.workspace import Workspace
@@ -41,17 +42,24 @@ class Installers:
             disable_cache=root.disable_cache
         )
     
+    def repository_pool(self, poetry: Optional[Poetry] = None) -> RepositoryPool:
+        pool = RepositoryPool([self.locker.locked_repository()])
+
+        if poetry:
+            for repo in poetry.pool.all_repositories:
+                pool.add_repository(repo, priority=Priority.SUPPLEMENTAL)
+
+        return pool
+    
     def project(self, poetry: Poetry) -> Installer:
         root = self.workspace.root
-        repository = self.locker.locked_repository()
-        pool = RepositoryPool([repository])
 
         return Installer(
             self.io,
             self.env,
             poetry.package,
             poetry.locker,
-            pool,
+            self.repository_pool(poetry),
             poetry.config,
             disable_cache=root.disable_cache
         )

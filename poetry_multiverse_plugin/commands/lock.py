@@ -1,10 +1,11 @@
-from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Dict
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed
+from typing import Dict, Iterable
 from cleo.helpers import option
+from cleo.io.io import IO
 from cleo.io.null_io import NullIO
-from cleo.io.outputs.section_output import SectionOutput
+from poetry.poetry import Poetry
 
+from poetry_multiverse_plugin import cli
 from poetry_multiverse_plugin.commands.workspace import WorkspaceCommand
 from poetry_multiverse_plugin.installers import Installers
 from poetry_multiverse_plugin.workspace import Workspace
@@ -29,24 +30,45 @@ multiple projects are locked to the same version.
 """
 
     def handle_workspace(self, workspace: Workspace) -> int:
-        installer = Installers(workspace, self.io, self.env)
-        result = installer.root(locked=self.option('no-update', True)).lock().run()
-        if result != 0:
-            self.io.write_error_line('<error>Failed to lock workspace!</>')
-            return result
+        installer = Installers(workspace, NullIO(), self.env)
+        with cli.progress(self.io, 'Loading workspace...'):
+            result = installer.root(locked=self.option('no-update', True)).lock().run()
+            if result != 0:
+                self.io.write_error_line('<error>Failed to lock workspace!</>')
+                return result
 
-        installer.io = NullIO()
         projects = sorted(workspace.projects, key=lambda p: p.package.name)
-        sections: Dict[str, SectionOutput] = defaultdict(self.io.section)
-        for project in projects:
-            sections[project.package.name].overwrite(f'- Locking <info>{project.package.name}</>')
-        
+        status = WorkspaceStatus(self.io, projects)
+
         with ThreadPoolExecutor() as executor:
             jobs = {
-                executor.submit(installer.project(project).lock().run): project.package.name
+                executor.submit(installer.project(project).lock().run): project
                 for project in projects
             }
             for future in as_completed(jobs):
                 result = max(result, future.result())
-                sections[jobs[future]].overwrite(f'- Locking <comment>{jobs[future]}</>')
+                status.complete(jobs[future], future)
         return result
+
+
+class WorkspaceStatus:
+    def __init__(self, io: IO, projects: Iterable[Poetry]) -> None:
+        self.sections: Dict[Poetry, cli.Action] = {
+            project: cli.Action(io.section(), 'Updating', project.package.name)
+            for project in projects
+        }
+        for project in projects:
+            self.sections[project].update('Pending', color='blue')
+    
+    def progress(self, project: Poetry, status: str):
+        self.sections[project].update(status, color='blue')
+    
+    def complete(self, project: Poetry, result: Future):
+        assert result.done()
+        action = self.sections[project]
+        if result.cancelled():
+            action.update('Canceled', color='gray')
+        elif result.exception():
+            action.update('Failed', color='red')
+        else:
+            action.update('Done', color='green')

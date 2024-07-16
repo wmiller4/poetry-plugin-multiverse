@@ -1,22 +1,17 @@
 from dataclasses import dataclass
+import os
+from pathlib import Path
 from poetry.factory import Factory
 from poetry.poetry import Poetry
-from typing import Any, Iterable, Optional
+from typing import Iterable, Optional
 
+from poetry_multiverse_plugin.config import WorkspaceConfig, parse_config
 from poetry_multiverse_plugin.dependencies import Dependencies
 from poetry_multiverse_plugin.packages import Packages
 
 
-def resolve(doc: Any, *path: str) -> Optional[Any]:
-    if not path:
-        return doc
-    if not isinstance(doc, dict):
-        return None
-    return resolve(doc.get(path[0]), *path[1:])
-
-
 def workspace_root(poetry: Poetry) -> Optional[Poetry]:
-    if resolve(poetry.pyproject.data.unwrap(), 'tool', 'multiverse', 'root') is True:
+    if parse_config(poetry).get('root') is True:
         return poetry
     try:
         parent_project = Factory().create_poetry(
@@ -38,8 +33,20 @@ class Workspace:
         return Workspace(root) if root else None
     
     @property
+    def config(self) -> WorkspaceConfig:
+        return parse_config(self.root)
+    
+    @property
+    def project_dirs(self) -> Iterable[Path]:
+        project_dirs = self.config.get('projects', ['**'])
+        for dir_glob in project_dirs:
+            toml_glob = f'{dir_glob.rstrip(os.sep)}{os.sep}pyproject.toml'
+            for pyproject in self.root.pyproject_path.parent.rglob(toml_glob):
+                yield pyproject.parent.resolve(True)
+    
+    @property
     def projects(self) -> Iterable[Poetry]:
-        for pyproject in self.root.pyproject_path.parent.rglob('pyproject.toml'):
+        for pyproject in self.project_dirs:
             if pyproject == self.root.pyproject_path:
                 continue
             try:

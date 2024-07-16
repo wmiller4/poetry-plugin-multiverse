@@ -46,16 +46,16 @@ class Workspace:
     
     @property
     def projects(self) -> Iterable[Poetry]:
-        for pyproject in self.project_dirs:
-            if pyproject == self.root.pyproject_path:
+        for project in self.project_dirs:
+            if project == self.root.pyproject_path.parent:
                 continue
             try:
                 yield Factory().create_poetry(
-                    pyproject.parent,
+                    project,
                     disable_cache=self.root.disable_cache
                 )
             except RuntimeError:
-                print(f'Skipping pyproject.toml {pyproject}')
+                print(f'Skipping pyproject.toml {project}')
     
     @property
     def dependencies(self) -> Dependencies:

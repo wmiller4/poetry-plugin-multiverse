@@ -17,11 +17,13 @@ class ProjectFactory:
     def __call__(
             self,
             path: Optional[str] = None, *,
-            workspace_root: bool = False
+            workspace_root: bool = False,
+            versions: bool = False
     ) -> Poetry:
         return utils.project(
             (self.tmp_path / (path or '.')).resolve(),
             workspace_root=workspace_root,
+            versions=versions,
             pool=self.pool
         )
     

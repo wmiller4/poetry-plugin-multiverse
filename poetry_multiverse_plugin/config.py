@@ -1,6 +1,7 @@
 from typing import Any, List, Optional, TypedDict
 from poetry.poetry import Poetry
 
+
 def resolve(doc: Any, *path: str) -> Optional[Any]:
     if not path:
         return doc
@@ -12,6 +13,7 @@ def resolve(doc: Any, *path: str) -> Optional[Any]:
 class WorkspaceConfig(TypedDict, total=False):
     root: bool
     projects: List[str]
+    versions: bool
 
 
 def parse_config(poetry: Poetry) -> WorkspaceConfig:

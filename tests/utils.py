@@ -39,14 +39,16 @@ def command(poetry: Poetry, factory: Type[Command]) -> CommandTester:
 def project(
         path: Path, *,
         workspace_root: bool = False,
+        versions: bool = False,
         pool: Optional[RepositoryPool] = None
 ) -> Poetry:
     assert CommandTester(Application().find('new')).execute(str(path)) == 0
     if workspace_root:
         with (path / 'pyproject.toml').open('a') as file:
-            file.write('''
+            file.write(f'''
                 [tool.multiverse]
                 root = true
+                versions = {str(versions).lower()}
             ''')
     poetry = Factory().create_poetry(path)
     poetry.set_pool(pool or RepositoryPool([]))

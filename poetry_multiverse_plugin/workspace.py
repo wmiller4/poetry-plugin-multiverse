@@ -41,7 +41,7 @@ class Workspace:
         project_dirs = self.config.get('projects', ['**'])
         for dir_glob in project_dirs:
             toml_glob = f'{dir_glob.rstrip(os.sep)}{os.sep}pyproject.toml'
-            for pyproject in self.root.pyproject_path.parent.rglob(toml_glob):
+            for pyproject in self.root.pyproject_path.parent.glob(toml_glob):
                 yield pyproject.parent.resolve(True)
     
     @property

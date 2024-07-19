@@ -26,7 +26,7 @@ class CliUtils:
         def process():
             while task := q.get():
                 task()
-            
+
         io_thread = Thread(target=process)
         try:
             io_thread.start()

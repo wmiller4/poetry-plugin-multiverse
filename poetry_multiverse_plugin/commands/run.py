@@ -1,8 +1,9 @@
 import asyncio
 from asyncio import create_subprocess_exec, subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from functools import partial
 from typing import List
-from cleo.helpers import argument
+from cleo.helpers import argument, option
 from poetry.poetry import Poetry
 
 from poetry_multiverse_plugin.commands.workspace import WorkspaceCommand
@@ -21,8 +22,17 @@ class RunCommand(WorkspaceCommand):
         )
     ]
 
+    options = [
+        option(
+            'parallel', 'p',
+            description='The maximum number of processes to run in parallel',
+            flag=False
+        )
+    ]
+
     def handle_workspace(self, workspace: Workspace) -> int:
         command: List[str] = self.argument('program')
+        parallel = self.option('parallel')
 
         projects = sorted(workspace.projects, key=lambda p: p.package.name)
 
@@ -37,10 +47,10 @@ class RunCommand(WorkspaceCommand):
                 )
                 return await proc.wait()
 
-            with ThreadPoolExecutor() as executor:
+            with ThreadPoolExecutor(int(parallel) if parallel else None) as executor:
                 jobs = {
-                    executor.submit(lambda: asyncio.run(run(project))): project
-                    for project in projects
+                    executor.submit(partial(lambda p: asyncio.run(run(p)), project)): project
+                    for project in reversed(projects)
                 }
 
                 return_code = 0

@@ -33,11 +33,12 @@ class WorkspaceStatus:
             project.pyproject_path: Action(io.section(), 'Updating', project.package.name)
             for project in sorted(projects, key=lambda p: p.package.name)
         }
-        for project in projects:
-            self.update(project, 'Pending', color='blue')
+        for action in self.sections.values():
+            action.update('Pending', color='blue')
     
     def update(self, project: Poetry, status: str, *, color: str = 'blue'):
-        self.q.put(lambda: self.sections[project.pyproject_path].update(status, color=color))
+        action = self.sections[project.pyproject_path]
+        self.q.put(lambda: action.update(status, color=color))
     
     def complete(self, project: Poetry, result: Future[int]) -> Optional[int]:
         assert result.done()
@@ -46,10 +47,10 @@ class WorkspaceStatus:
         elif result.exception():
             self.update(project, 'Error', color='red')
         else:
-            return_code = result.result()
-            if return_code:
+            code = result.result()
+            if code != 0:
                 self.update(project, 'Failed', color='red')
             else:
                 self.update(project, 'Done', color='green')
-            return return_code
+            return code
         return None

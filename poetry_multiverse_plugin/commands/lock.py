@@ -30,15 +30,15 @@ multiple projects are locked to the same version.
         installer = Installers(workspace, NullIO(), self.env)
         return_code = 0
 
-        with self.cli.progress('Loading workspace...'):
+        with self.cli.progress('Locking workspace...'):
             return_code = installer.root(locked=self.option('no-update', True)).lock().run()
             if return_code != 0:
                 self.io.write_error_line('<error>Failed to lock workspace!</>')
                 return return_code
 
-        with self.cli.status() as status:
+        with self.cli.status(None, 'Updating') as status:
             def run(project: Poetry) -> int:
-                status.update(project, 'Locking...')
+                status(project).update('Locking...')
                 return installer.project(project).lock().run()
 
             with ThreadPoolExecutor() as executor:
@@ -48,7 +48,7 @@ multiple projects are locked to the same version.
                 }
                 for future in as_completed(jobs):
                     project = jobs[future]
-                    result = status.complete(project, future)
+                    result = status(project).complete(future)
                     return_code = max(return_code, result if result is not None else 1)
         
         return return_code

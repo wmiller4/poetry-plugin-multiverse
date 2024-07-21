@@ -7,7 +7,7 @@ from cleo.io.io import IO
 from poetry.console.commands.installer_command import InstallerCommand
 
 from poetry_multiverse_plugin.cli.progress import progress
-from poetry_multiverse_plugin.cli.status import WorkspaceStatus
+from poetry_multiverse_plugin.cli.status import OutputQueue, StatusConfig, WorkspaceStatus
 from poetry_multiverse_plugin.workspace import Workspace
 
 
@@ -20,7 +20,7 @@ class CliUtils:
         return progress(self.io, message)
     
     @contextmanager
-    def status(self) -> Iterator[WorkspaceStatus]:
+    def status(self, header: Optional[str], action: str) -> Iterator[WorkspaceStatus]:
         q: Queue[Optional[Callable[[], None]]] = Queue()
 
         def process():
@@ -30,7 +30,11 @@ class CliUtils:
         io_thread = Thread(target=process)
         try:
             io_thread.start()
-            yield WorkspaceStatus(self.io, self.workspace.projects, q)
+            yield WorkspaceStatus(
+                OutputQueue(q.put, self.io.section),
+                self.workspace.projects,
+                StatusConfig(header, StatusConfig.default_template(action))
+            )
         finally:
             q.put(None)
             io_thread.join()

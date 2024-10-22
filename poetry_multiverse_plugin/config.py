@@ -14,7 +14,6 @@ class WorkspaceConfig(TypedDict, total=False):
     projects: List[str]
 
 
-@staticmethod
 def parse_config(poetry: Poetry) -> WorkspaceConfig:
     return WorkspaceConfig(
         resolve(poetry.pyproject.data.unwrap(), 'tool', 'multiverse') or {}

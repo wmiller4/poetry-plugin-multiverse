@@ -7,7 +7,7 @@ This plugin manages dependencies for multi-project workspaces, similar to tools 
 ## Quick Start
 
 This plugin requires Poetry 1.8 or later.
-Poetry must be running on Python 3.8 or later.
+Poetry must be running on Python 3.9 or later.
 (This is not necessarily the same as your project's Python version.)
 
 1.  Install the plugin:

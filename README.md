@@ -21,7 +21,7 @@ Poetry must be running on Python 3.8 or later.
     root = true
     ```
 
-3.  Check whether projects in the workspace are locked to the same packaeg versions:
+3.  Check whether projects in the workspace are locked to the same package versions:
     ```
     poetry workspace check
     ```
@@ -30,13 +30,5 @@ Poetry must be running on Python 3.8 or later.
 
 In addition to the runtime dependencies, install:
 
-* Poethepoet
-* poetry-dynamic-versioning
-
-The Poe tasks in tasks.toml provide a helper command for testing the plugin.
-This means you don't need to build and install the plugin during development.
-Instead of running your Poetry commands with `poetry`, use `poe run` instead:
-
-```
-poe run workspace check
-```
+* [Poe the Poet](https://poethepoet.natn.io)
+* [poetry-dynamic-versioning[plugin]](https://github.com/mtkennerly/poetry-dynamic-versioning)

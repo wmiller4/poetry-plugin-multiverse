@@ -2,8 +2,11 @@ from concurrent.futures import Future
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Dict, Iterable, Optional, TypeVar
-from cleo.io.outputs.section_output import SectionOutput
+from cleo.io.io import IO
+from cleo.io.outputs.output import Output
 from poetry.poetry import Poetry
+
+from poetry_multiverse_plugin.cli.utils import can_overwrite, overwrite
 
 
 ResultT = TypeVar('ResultT')
@@ -12,7 +15,12 @@ ResultT = TypeVar('ResultT')
 @dataclass
 class OutputQueue:
     submit: Callable[[Callable[[], None]], None]
-    section: Callable[[], SectionOutput]
+    io: IO
+
+    def section(self) -> Output:
+        if can_overwrite(self.io.output):
+            return self.io.section()
+        return self.io.output
 
 
 @dataclass
@@ -33,14 +41,14 @@ class StatusConfig:
 @dataclass
 class StatusOutput:
     submit: Callable[[Callable[[], None]], None]
-    summary_section: SectionOutput
-    log_section: SectionOutput
+    summary_section: Output
+    log_section: Output
 
     def summary(self, message: str):
-        self.submit(lambda: self.summary_section.overwrite(message))
+        self.submit(lambda: overwrite(self.summary_section, message))
 
     def log(self, message: str):
-        self.submit(lambda: self.log_section.write(message))
+        self.submit(lambda: self.log_section.write_line(message.strip()))
 
 
 @dataclass
@@ -79,7 +87,7 @@ class WorkspaceStatus:
         self.log_section = output.section()
         if config.header:
             self.header_section = output.section()
-            self.header_section.overwrite(config.header)
+            overwrite(self.header_section, config.header)
         self.sections: Dict[Path, ProjectStatus] = {
             project.pyproject_path: ProjectStatus(
                 StatusOutput(output.submit, output.section(), self.log_section),

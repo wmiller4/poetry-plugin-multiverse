@@ -31,7 +31,7 @@ class CliUtils:
         try:
             io_thread.start()
             yield WorkspaceStatus(
-                OutputQueue(q.put, self.io.section),
+                OutputQueue(q.put, self.io),
                 self.workspace.projects,
                 StatusConfig(header, StatusConfig.default_template(action))
             )

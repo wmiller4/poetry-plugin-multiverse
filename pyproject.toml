@@ -6,6 +6,8 @@ authors = ["Wes Miller <37603175+wmiller4@users.noreply.github.com>"]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/wmiller4/poetry-multiverse-plugin"
+homepage = "https://irregular-expressions.net/multiverse"
+documentation = "https://irregular-expressions.net/multiverse"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Plugins",

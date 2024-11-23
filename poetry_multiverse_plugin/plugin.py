@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Callable, List, Type
 from cleo.commands.command import Command as CleoCommand
+from cleo.events.console_event import ConsoleEvent
 from cleo.events.console_events import COMMAND
 from cleo.events.event import Event
 from cleo.events.event_dispatcher import EventDispatcher
@@ -12,6 +13,7 @@ from poetry_multiverse_plugin.commands.info import InfoCommand
 from poetry_multiverse_plugin.commands.lock import LockCommand
 from poetry_multiverse_plugin.commands.run import RunCommand
 from poetry_multiverse_plugin.commands.show import ShowCommand
+from poetry_multiverse_plugin.errors import error_boundary
 from poetry_multiverse_plugin.hooks.build import PreBuildHook
 from poetry_multiverse_plugin.hooks.hook import Hook, HookContext
 
@@ -30,8 +32,10 @@ class PluginConfig:
             application.event_dispatcher.add_listener(COMMAND, self._before_command)
     
     def _before_command(self, event: Event, kind: str, dispatcher: EventDispatcher) -> None:
-        if context := HookContext.create(event):
-            context.run(*self.pre_hooks)
+        if isinstance(event, ConsoleEvent):
+            with error_boundary(event.io):
+                if context := HookContext.create(event):
+                    context.run(*self.pre_hooks)
 
 
 class MultiversePlugin(ApplicationPlugin):

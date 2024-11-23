@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 import os
 from pathlib import Path
+
+from poetry.core.pyproject.exceptions import PyProjectException
 from poetry.factory import Factory
 from poetry.poetry import Poetry
 from typing import Iterable, Optional
@@ -19,7 +21,7 @@ def workspace_root(poetry: Poetry) -> Optional[Poetry]:
             disable_cache=poetry.disable_cache
         )
         return workspace_root(parent_project)
-    except RuntimeError:
+    except (PyProjectException, RuntimeError):
         return None
 
 

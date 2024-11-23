@@ -28,6 +28,13 @@ def test_parent_workspace(tmp_path: Path):
     assert workspace.root.pyproject_path == parent.pyproject_path
 
 
+def test_non_poetry_parent(tmp_path: Path):
+    (tmp_path / 'pyproject.toml').touch()
+    child = utils.project(tmp_path / 'child')
+    workspace = Workspace.create(child) 
+    assert workspace is None
+
+
 def test_workspace_projects(project: ProjectFactory):
     workspace = project.workspace()
     child = project('child')

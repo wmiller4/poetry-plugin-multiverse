@@ -1,10 +1,9 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from cleo.helpers import option
-from cleo.io.null_io import NullIO
 from poetry.poetry import Poetry
 
 from poetry_multiverse_plugin.commands.workspace import WorkspaceCommand
-from poetry_multiverse_plugin.installers import Installers
+from poetry_multiverse_plugin.repositories import lock, locked_pool, project_pool
 from poetry_multiverse_plugin.workspace import Workspace
 
 
@@ -27,19 +26,23 @@ multiple projects are locked to the same version.
 """
 
     def handle_workspace(self, workspace: Workspace) -> int:
-        installer = Installers(workspace, NullIO(), self.env)
         return_code = 0
+        root = workspace.root
 
         with self.cli.progress('Locking workspace...'):
-            return_code = installer.root(locked=self.option('no-update', True)).lock().run()
+            pool = locked_pool(list(workspace.packages)) if self.option('no-update', True) else \
+                project_pool(*workspace.projects, locked=None)
+            return_code = lock(root, pool, env=self.env)
             if return_code != 0:
                 self.io.write_error_line('<error>Failed to lock workspace!</>')
                 return return_code
 
         with self.cli.status(None, 'Updating') as status:
+            workspace_pool = project_pool(locked=root)
+
             def run(project: Poetry) -> int:
                 status(project).update('Locking...')
-                return installer.project(project).lock().run()
+                return lock(project, workspace_pool, env=self.env)
 
             with ThreadPoolExecutor() as executor:
                 jobs = {

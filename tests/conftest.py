@@ -35,7 +35,8 @@ class ProjectFactory:
             repo.add_package(pkg)
     
     def workspace(self, poetry: Optional[Poetry] = None) -> Workspace:
-        workspace = Workspace.create(poetry or self(workspace_root=True)) 
+        project = poetry or self(workspace_root=True)
+        workspace = Workspace.create(project, pool=project.pool) 
         assert workspace is not None
         return workspace
 

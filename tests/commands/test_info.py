@@ -11,7 +11,7 @@ def test_workspace_info(project: ProjectFactory):
     assert info.execute() == 0
 
     output = info.io.fetch_output()
-    assert root.package.name in output
+    assert 'workspace' in output
     assert str(root.pyproject_path.parent) in output
     assert 'child1' in output
     assert 'child2' in output

@@ -16,7 +16,7 @@ from poetry_multiverse_plugin.commands.show import ShowCommand
 from poetry_multiverse_plugin.errors import error_boundary
 from poetry_multiverse_plugin.hooks.build import PreBuildHook
 from poetry_multiverse_plugin.hooks.hook import Hook, HookContext
-from poetry_multiverse_plugin.hooks.lock import PostLockHook
+from poetry_multiverse_plugin.hooks.lock import PreLockHook, PostLockHook
 
 
 @dataclass
@@ -58,7 +58,8 @@ class MultiversePlugin(ApplicationPlugin):
                 ShowCommand
             ],
             pre_hooks=[
-                PreBuildHook
+                PreBuildHook,
+                PreLockHook
             ],
             post_hooks=[
                 PostLockHook

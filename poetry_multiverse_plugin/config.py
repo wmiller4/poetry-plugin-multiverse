@@ -14,6 +14,7 @@ class WorkspaceConfig(TypedDict, total=False):
     root: bool
     projects: List[str]
     versions: bool
+    lock: bool
 
 
 def parse_config(poetry: Poetry) -> WorkspaceConfig:

@@ -1,5 +1,6 @@
 
 from cleo.events.console_command_event import ConsoleCommandEvent
+from cleo.io.io import IO
 from poetry.console.commands.command import Command
 
 from poetry_multiverse_plugin.hooks.hook import Hook, HookContext
@@ -21,7 +22,7 @@ class SimpleHook(Hook):
         super().__init__()
         self.was_run = False
 
-    def run(self, workspace: Workspace, command: Command):
+    def run(self, workspace: Workspace, command: Command, io: IO):
         resolved = Workspace.create(command.poetry)
         assert resolved is not None
         assert workspace.root.pyproject_path.resolve() == resolved.root.pyproject_path.resolve()

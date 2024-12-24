@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from cleo.io.io import IO
 from cleo.testers.application_tester import ApplicationTester
 from poetry.console.commands.command import Command
 
@@ -11,7 +12,7 @@ from tests.utils import MockApplication
 
 
 class BrokenHook(Hook):
-    def run(self, workspace: Workspace, command: Command):
+    def run(self, workspace: Workspace, command: Command, io: IO):
         raise Exception('BrokenHook is broken!')
     
     @staticmethod
@@ -49,7 +50,7 @@ def test_hook_exception_handler(project: ProjectFactory):
     project(workspace_root=True)
     p1 = project('p1')
     app = MockApplication(p1)
-    PluginConfig(commands=[], pre_hooks=[broken_hook]).configure(app)
+    PluginConfig(commands=[], pre_hooks=[broken_hook], post_hooks=[]).configure(app)
     tester = ApplicationTester(app)
 
     assert tester.execute('lock') == 0

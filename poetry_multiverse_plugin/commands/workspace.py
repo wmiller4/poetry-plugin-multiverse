@@ -51,7 +51,7 @@ class WorkspaceCommand(InstallerCommand):
         raise NotImplementedError
     
     def handle(self) -> int:
-        workspace = Workspace.create(self.poetry)
+        workspace = Workspace.create(self.poetry, pool=self.poetry.pool)
         if not workspace:
             self.line_error('Unable to locate workspace root')
             return 1

@@ -1,7 +1,6 @@
-from cleo.io.null_io import NullIO
 from poetry.console.commands import show
 
-from poetry_multiverse_plugin.installers import Installers
+from poetry_multiverse_plugin.repositories import lock, locked_pool
 from poetry_multiverse_plugin.workspace import Workspace
 
 
@@ -15,10 +14,11 @@ class ShowCommand(show.ShowCommand):
             self.io.write_error('Unable to locate workspace root')
             return 1
 
-        installer = Installers(workspace, NullIO(), self.env)
-        installer.root(locked=True).lock().run()
-        self.set_poetry(workspace.root)
-        for dep in workspace.dependencies:
-            self.poetry.package.add_dependency(dep)
-        self.poetry.set_locker(installer.locker)
+        root = workspace.root
+        return_code = lock(root, locked_pool(list(workspace.packages)), env=self.env)
+        if return_code != 0:
+                self.io.write_error_line('<error>Failed to lock workspace!</>')
+                return return_code
+
+        self.set_poetry(root)
         return super().handle()

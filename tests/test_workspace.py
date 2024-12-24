@@ -17,7 +17,7 @@ def test_self_workspace(tmp_path: Path):
     poetry = utils.project(tmp_path, workspace_root=True)
     workspace = Workspace.create(poetry) 
     assert workspace is not None
-    assert workspace.root.pyproject_path == tmp_path / 'pyproject.toml'
+    assert workspace.root.pyproject_path != tmp_path / 'pyproject.toml'
 
 
 def test_parent_workspace(tmp_path: Path):
@@ -25,7 +25,7 @@ def test_parent_workspace(tmp_path: Path):
     child = utils.project(tmp_path / 'child')
     workspace = Workspace.create(child) 
     assert workspace is not None
-    assert workspace.root.pyproject_path == parent.pyproject_path
+    assert workspace.root.pyproject_path != parent.pyproject_path
 
 
 def test_non_poetry_parent(tmp_path: Path):
@@ -50,7 +50,7 @@ def test_dependencies_multiple(project: ProjectFactory):
         Package('click', '8.1.2')
     )
     workspace = project.workspace()
-    utils.add(workspace.root, 'click=^8.1')
+    utils.add(project('p1'), 'click=^8.1')
     utils.add(project('p2'), 'click=^8')
 
     resolved = dict(

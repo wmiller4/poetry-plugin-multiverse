@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, Type
+from typing import List, Optional, Type
 
 from cleo.events.console_command_event import ConsoleCommandEvent
 from cleo.events.event import Event
@@ -47,9 +47,16 @@ class MockApplication(Application):
         set_env(command)
 
 
-def command(poetry: Poetry, factory: Type[Command]) -> CommandTester:
+def command(
+    poetry: Poetry,
+    factory: Type[Command], *,
+    deps: Optional[List[Type[Command]]] = None
+) -> CommandTester:
+    app = MockApplication(poetry)
+    for dep in deps or []:
+        app.add(dep())
     cmd = factory()
-    cmd.set_application(MockApplication(poetry))
+    cmd.set_application(app)
     tester = CommandTester(cmd)
     set_env(cmd)
     if isinstance(cmd, InstallerCommand):
@@ -62,6 +69,7 @@ def project(
         path: Path, *,
         workspace_root: bool = False,
         versions: bool = False,
+        lock: bool = False,
         pool: Optional[RepositoryPool] = None
 ) -> Poetry:
     assert CommandTester(Application().find('new')).execute(str(path)) == 0
@@ -71,6 +79,7 @@ def project(
                 [tool.multiverse]
                 root = true
                 versions = {str(versions).lower()}
+                lock = {str(lock).lower()}
             ''')
     poetry = Factory().create_poetry(path)
     poetry.set_pool(pool or RepositoryPool([]))

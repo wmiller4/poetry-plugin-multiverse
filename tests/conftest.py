@@ -18,12 +18,14 @@ class ProjectFactory:
             self,
             path: Optional[str] = None, *,
             workspace_root: bool = False,
-            versions: bool = False
+            versions: bool = False,
+            lock: bool = False
     ) -> Poetry:
         return utils.project(
             (self.tmp_path / (path or '.')).resolve(),
             workspace_root=workspace_root,
             versions=versions,
+            lock=lock,
             pool=self.pool
         )
     

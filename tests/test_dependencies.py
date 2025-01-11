@@ -8,7 +8,7 @@ from tests.conftest import ProjectFactory
 
 def test_dependencies(project: ProjectFactory):
     project.packages(Package('click', '7.0.9'))
-    root = project(workspace_root=True)
+    root = project()
     utils.add(root, 'click=^7')
 
     package_names = set(dep.name for dep in Dependencies.from_projects(root))

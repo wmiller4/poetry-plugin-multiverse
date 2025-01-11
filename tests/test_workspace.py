@@ -14,18 +14,26 @@ def test_no_workspace(tmp_path: Path):
 
 
 def test_self_workspace(tmp_path: Path):
-    poetry = utils.project(tmp_path, workspace_root=True)
+    poetry = utils.project(tmp_path)
+    (tmp_path / 'multiverse.toml').touch()
     workspace = Workspace.create(poetry) 
     assert workspace is not None
     assert workspace.root.pyproject_path != tmp_path / 'pyproject.toml'
 
 
+def test_excluded_workspace(tmp_path: Path):
+    (tmp_path / 'multiverse.toml').write_text('exclude = ["child"]')
+    child = utils.project(tmp_path / 'child')
+    workspace = Workspace.create(child) 
+    assert workspace is None
+
+
 def test_parent_workspace(tmp_path: Path):
-    parent = utils.project(tmp_path, workspace_root=True)
+    (tmp_path / 'multiverse.toml').touch()
     child = utils.project(tmp_path / 'child')
     workspace = Workspace.create(child) 
     assert workspace is not None
-    assert workspace.root.pyproject_path != parent.pyproject_path
+    assert workspace.root.pyproject_path != tmp_path / 'pyproject.toml'
 
 
 def test_non_poetry_parent(tmp_path: Path):
@@ -36,8 +44,8 @@ def test_non_poetry_parent(tmp_path: Path):
 
 
 def test_workspace_projects(project: ProjectFactory):
-    workspace = project.workspace()
     child = project('child')
+    workspace = project.workspace(child)
 
     projects = list(workspace.projects)
     assert(len(projects) == 1)
@@ -49,9 +57,9 @@ def test_dependencies_multiple(project: ProjectFactory):
         Package('click', '8.0.9'),
         Package('click', '8.1.2')
     )
-    workspace = project.workspace()
-    utils.add(project('p1'), 'click=^8.1')
+    p1 = utils.add(project('p1'), 'click=^8.1')
     utils.add(project('p2'), 'click=^8')
+    workspace = project.workspace(p1)
 
     resolved = dict(
         (dep.complete_name, dep)

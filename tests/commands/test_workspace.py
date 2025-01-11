@@ -11,7 +11,8 @@ def test_workspace_not_found(project: ProjectFactory):
 
 
 def test_workspace_base_class(project: ProjectFactory):
-    root = project(workspace_root=True)
+    root = project()
+    project.workspace(root)
     cmd = command(root, WorkspaceCommand)
     with pytest.raises(NotImplementedError):
         cmd.execute()

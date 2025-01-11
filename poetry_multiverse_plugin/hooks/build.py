@@ -10,5 +10,5 @@ class PreBuildHook(Hook):
     command_names = { 'build' }
 
     def run(self, workspace: Workspace, command: Command, io: IO):
-        if workspace.config.get('versions') is True:
+        if workspace.config.hooks_enabled('build'):
             PublishedDependencies(workspace.projects).patch_project(command.poetry)

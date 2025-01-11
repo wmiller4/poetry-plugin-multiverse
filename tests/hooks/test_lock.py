@@ -11,8 +11,6 @@ from tests.utils import command
 
 
 def test_lock_disabled(project: ProjectFactory):
-    project(workspace_root=True, lock=False)
-
     project.packages(Package('click', '8.0.9'))
     p2 = utils.add(project('p2'), 'click=<8.1')
 
@@ -21,6 +19,7 @@ def test_lock_disabled(project: ProjectFactory):
 
     project.packages(Package('click', '8.1.4'))
 
+    project.workspace(p1)
     lock = command(p1, LockCommand, deps=[WorkspaceLockCommand])
     context = HookContext.create(ConsoleCommandEvent(lock.command, lock.io))
     assert context is not None
@@ -39,8 +38,6 @@ def test_lock_disabled(project: ProjectFactory):
 
 
 def test_pre_lock_hook(project: ProjectFactory):
-    project(workspace_root=True, lock=True)
-
     project.packages(Package('click', '8.0.9'))
     p2 = utils.add(project('p2'), 'click=<8.1')
 
@@ -49,6 +46,7 @@ def test_pre_lock_hook(project: ProjectFactory):
 
     project.packages(Package('click', '8.1.4'))
 
+    project.workspace(p1, config={ 'hooks': ['lock'] })
     lock = command(p1, LockCommand, deps=[WorkspaceLockCommand])
     context = HookContext.create(ConsoleCommandEvent(lock.command, lock.io))
     assert context is not None
@@ -66,8 +64,6 @@ def test_pre_lock_hook(project: ProjectFactory):
 
 
 def test_post_lock_hook(project: ProjectFactory):
-    project(workspace_root=True, lock=True)
-
     project.packages(Package('click', '8.0.9'))
     p2 = utils.add(project('p2'), 'click=^8')
 
@@ -76,6 +72,7 @@ def test_post_lock_hook(project: ProjectFactory):
 
     project.packages(Package('click', '8.1.4'))
 
+    project.workspace(p1, config={ 'hooks': ['lock'] })
     lock = command(p1, LockCommand, deps=[WorkspaceLockCommand])
     context = HookContext.create(ConsoleCommandEvent(lock.command, lock.io))
     assert context is not None

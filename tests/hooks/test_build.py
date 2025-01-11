@@ -14,8 +14,8 @@ from tests.utils import command
 
 
 def test_versions_disabled(project: ProjectFactory):
-    project(workspace_root=True, versions=False)
     p1 = project('p1')
+    project.workspace(p1)
     version = command(p1, VersionCommand)
     assert version.execute('1.2.34') == 0
 
@@ -35,8 +35,8 @@ def test_versions_disabled(project: ProjectFactory):
 
 
 def test_run_hook(project: ProjectFactory):
-    project(workspace_root=True, versions=True)
     p1 = project('p1')
+    project.workspace(p1, config={ 'hooks': ['build'] })
     version = command(p1, VersionCommand)
     assert version.execute('1.2.34') == 0
 

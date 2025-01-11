@@ -25,7 +25,7 @@ class PreLockHook(Hook):
     command_names = { 'add', 'lock', 'remove', 'update' }
 
     def run(self, workspace: Workspace, command: Command, io: IO):
-        if workspace.config.get('lock') is not True:
+        if not workspace.config.hooks_enabled('lock'):
             return
         if not isinstance(command, InstallerCommand):
             return
@@ -49,5 +49,5 @@ class PostLockHook(Hook):
     command_names = { 'add', 'lock', 'remove', 'update' }
 
     def run(self, workspace: Workspace, command: Command, io: IO):
-        if workspace.config.get('lock') is True:
+        if workspace.config.hooks_enabled('lock'):
             command.call('workspace lock', '--no-update')

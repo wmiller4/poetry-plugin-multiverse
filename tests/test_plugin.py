@@ -30,9 +30,9 @@ def test_no_workspace(project: ProjectFactory):
 
 
 def test_workspace(project: ProjectFactory):
-    root = project(workspace_root=True)
     p1 = project('p1')
-    tester = ApplicationTester(MockApplication(root))
+    project.workspace(p1)
+    tester = ApplicationTester(MockApplication(p1))
     assert tester.execute('workspace info') == 0
     assert p1.package.name in tester.io.fetch_output()
 
@@ -47,8 +47,8 @@ def test_hook_exception_handler(project: ProjectFactory):
     def broken_hook() -> BrokenHook:
         return BrokenHook.with_command_names('lock')
 
-    project(workspace_root=True)
     p1 = project('p1')
+    project.workspace(p1)
     app = MockApplication(p1)
     PluginConfig(commands=[], pre_hooks=[broken_hook], post_hooks=[]).configure(app)
     tester = ApplicationTester(app)

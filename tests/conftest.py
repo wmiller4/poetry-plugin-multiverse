@@ -1,10 +1,14 @@
 from dataclasses import dataclass, field
+import json
 from pathlib import Path
-from typing import Optional
+from typing import Mapping, Optional
+
 from poetry.core.packages.package import Package
 from poetry.poetry import Poetry
 from poetry.repositories import Repository, RepositoryPool
 import pytest
+
+from poetry_multiverse_plugin.config import MultiverseToml, WorkspaceConfiguration
 from poetry_multiverse_plugin.workspace import Workspace
 from tests import utils
 
@@ -14,18 +18,9 @@ class ProjectFactory:
     tmp_path: Path
     pool: RepositoryPool = field(default_factory=lambda: RepositoryPool([Repository('mock')]))
 
-    def __call__(
-            self,
-            path: Optional[str] = None, *,
-            workspace_root: bool = False,
-            versions: bool = False,
-            lock: bool = False
-    ) -> Poetry:
+    def __call__(self, path: Optional[str] = None) -> Poetry:
         return utils.project(
             (self.tmp_path / (path or '.')).resolve(),
-            workspace_root=workspace_root,
-            versions=versions,
-            lock=lock,
             pool=self.pool
         )
     
@@ -34,11 +29,23 @@ class ProjectFactory:
         for pkg in packages:
             repo.add_package(pkg)
     
-    def workspace(self, poetry: Optional[Poetry] = None) -> Workspace:
-        project = poetry or self(workspace_root=True)
-        workspace = Workspace.create(project, pool=project.pool) 
-        assert workspace is not None
-        return workspace
+    def workspace(
+        self,
+        context: Poetry, *,
+        config: Optional[MultiverseToml] = None,
+        env: Optional[Mapping[str, str]] = None
+    ) -> Workspace:
+        if config:
+            (self.tmp_path / 'multiverse.toml').write_text('\n'.join(
+                f'{key} = {json.dumps(value)}' for key, value in config.items()
+            ))
+        else:
+            (self.tmp_path / 'multiverse.toml').touch()
+        return Workspace(
+            WorkspaceConfiguration(self.tmp_path, config or {}, env or {}),
+            context,
+            pool=self.pool
+        )
 
 
 @pytest.fixture

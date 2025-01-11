@@ -45,31 +45,10 @@ def test_no_workspace(project: ProjectFactory):
     assert context is None
 
 
-def test_disabled_hooks(project: ProjectFactory):
-    root = project(workspace_root=True)
-    info = command(root, SimpleCommand)
-
-    context = HookContext.create(
-        ConsoleCommandEvent(info.command, info.io),
-        { 'MULTIVERSE_DISABLE_HOOKS': 'true' }
-    )
-    assert context is None
-
-
-def test_enabled_hooks(project: ProjectFactory):
-    root = project(workspace_root=True)
-    info = command(root, SimpleCommand)
-
-    context = HookContext.create(
-        ConsoleCommandEvent(info.command, info.io),
-        { 'MULTIVERSE_DISABLE_HOOKS': 'false' }
-    )
-    assert context is not None
-
-
 def test_skip_hook_name(project: ProjectFactory):
-    root = project(workspace_root=True)
+    root = project()
     project('child1')
+    project.workspace(root)
     info = command(root, SimpleCommand)
 
     context = HookContext.create(ConsoleCommandEvent(info.command, info.io))
@@ -81,8 +60,9 @@ def test_skip_hook_name(project: ProjectFactory):
 
 
 def test_run_hook(project: ProjectFactory):
-    root = project(workspace_root=True)
+    root = project()
     project('child1')
+    project.workspace(root)
     info = command(root, SimpleCommand)
 
     context = HookContext.create(ConsoleCommandEvent(info.command, info.io))
@@ -91,3 +71,16 @@ def test_run_hook(project: ProjectFactory):
     hook = SimpleHook.with_command_names('testcmd', 'anothercmd')
     context.run(lambda: hook)
     assert hook.was_run is True
+
+
+def test_disabled_hooks(project: ProjectFactory):
+    child = project('child1')
+    info = command(child, SimpleCommand)
+    info_command: SimpleCommand = info.command  # type:ignore
+
+    root = project.workspace(child, env={ 'MULTIVERSE_DISABLE_HOOKS': 'true' })
+    context = HookContext(root, info_command, info.io)
+
+    hook = SimpleHook.with_command_names('testcmd', 'anothercmd')
+    context.run(lambda: hook)
+    assert hook.was_run is False

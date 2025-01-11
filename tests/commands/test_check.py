@@ -6,15 +6,15 @@ from poetry.core.packages.package import Package
 
 
 def test_dependencies_conflict(project: ProjectFactory):
-    root = project(workspace_root=True)
     project.packages(
         Package('click', '7.0.9'),
         Package('click', '8.1.2')
     )
-    utils.add(project('p1'), 'click=^7')
+    p1 = utils.add(project('p1'), 'click=^7')
     utils.add(project('p2'), 'click=^8')
 
-    check = command(root, CheckCommand)
+    project.workspace(p1)
+    check = command(p1, CheckCommand)
     assert check.execute() == 1
 
     output = check.io.fetch_output()
@@ -24,8 +24,6 @@ def test_dependencies_conflict(project: ProjectFactory):
 
 
 def test_multiple_versions(project: ProjectFactory):
-    root = project(workspace_root=True)
-
     project.packages(
         Package('click', '8.0.9')
     )
@@ -34,9 +32,10 @@ def test_multiple_versions(project: ProjectFactory):
     project.packages(
         Package('click', '8.1.2')
     )
-    utils.add(project('p1'), 'click=^8.1')
+    p1 = utils.add(project('p1'), 'click=^8.1')
 
-    check = command(root, CheckCommand)
+    project.workspace(p1)
+    check = command(p1, CheckCommand)
     assert check.execute() == 1
 
     output = check.io.fetch_output()
@@ -46,14 +45,13 @@ def test_multiple_versions(project: ProjectFactory):
 
 
 def test_no_issues(project: ProjectFactory):
-    root = project(workspace_root=True)
-
     project.packages(
         Package('click', '8.0.9'),
         Package('click', '8.1.2')
     )
-    utils.add(project('p1'), 'click=^8.1')
+    p1 = utils.add(project('p1'), 'click=^8.1')
     utils.add(project('p2'), 'click=^8')
 
-    check = command(root, CheckCommand)
+    project.workspace(p1)
+    check = command(p1, CheckCommand)
     assert check.execute() == 0

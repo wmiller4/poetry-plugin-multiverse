@@ -1,8 +1,6 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-import json
-import os
-from typing import Callable, ClassVar, Mapping, Optional, Set
+from typing import Callable, ClassVar, Optional, Set
 from cleo.events.event import Event
 from cleo.events.console_event import ConsoleEvent
 from cleo.io.io import IO
@@ -26,18 +24,19 @@ class HookContext:
     io: IO
 
     def run(self, *hooks: Callable[[], Hook]):
+        if not self.workspace.config.hooks_enabled():
+            return
         for hook in hooks:
             hook_instance = hook()
             if self.command.name in hook_instance.command_names:
                 hook_instance.run(self.workspace, self.command, self.io)
 
     @staticmethod
-    def create(event: Event, env: Optional[Mapping[str, str]] = None) -> Optional['HookContext']:
-        if json.loads((env or os.environ).get('MULTIVERSE_DISABLE_HOOKS') or 'false'):
-            return None
+    def create(event: Event) -> Optional['HookContext']:
         if not isinstance(event, ConsoleEvent):
             return None
         if not isinstance(event.command, Command):
             return None
         if workspace := Workspace.create(event.command.poetry):
             return HookContext(workspace, event.command, event.io)
+        return None

@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
 import os
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Iterable, Mapping, Optional
 
 from poetry.factory import Factory
@@ -18,6 +20,7 @@ class Workspace:
     context: Poetry
     disable_cache: bool = field(kw_only=True, default=False)
     pool: Optional[RepositoryPool] = field(kw_only=True, default=None)
+    root_project: TemporaryDirectory = field(default_factory=TemporaryDirectory)
 
     @staticmethod
     def create(
@@ -39,7 +42,7 @@ class Workspace:
     def root(self) -> Poetry:
         project = root_project(
             *self.projects,
-            path=self.config.root,
+            path=Path(self.root_project.name),
             context=self.context
         )
         if pool := self.pool:

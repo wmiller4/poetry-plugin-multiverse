@@ -25,7 +25,7 @@ class SimpleHook(Hook):
     def run(self, workspace: Workspace, command: Command, io: IO):
         resolved = Workspace.create(command.poetry)
         assert resolved is not None
-        assert workspace.root.pyproject_path.resolve() == resolved.root.pyproject_path.resolve()
+        assert workspace.config.root.resolve() == resolved.config.root.resolve()
         assert command.name in self.command_names
         self.was_run = True
     

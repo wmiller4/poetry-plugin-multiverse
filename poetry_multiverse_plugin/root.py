@@ -4,6 +4,7 @@ from poetry.core.constraints.version.parser import parse_single_constraint
 from poetry.core.packages.project_package import ProjectPackage
 from poetry.packages.locker import Locker
 from poetry.poetry import Poetry
+from poetry.factory import Factory
 
 from poetry_multiverse_plugin.dependencies import Dependencies
 
@@ -19,11 +20,13 @@ def root_project(*projects: Poetry, path: Path, context: Poetry) -> Poetry:
     for dep in Dependencies.from_projects(*projects):
         aggregate_project.add_dependency(dep)
 
+    pyproject = path / 'workspace.toml'
+    pyproject.write_text(Factory.create_pyproject_from_package(aggregate_project).as_string())
     return Poetry(
-        file=path / 'multiverse.toml',
+        file=pyproject,
         local_config=context.local_config,
         package=aggregate_project,
-        locker=Locker(path / 'multiverse.lock', context.local_config),
+        locker=Locker(path / 'workspace.lock', context.local_config),
         config=context.config,
         disable_cache=context.disable_cache
     )

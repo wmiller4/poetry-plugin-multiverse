@@ -1,9 +1,12 @@
 from contextlib import contextmanager
 from typing import Iterator
 from cleo.io.io import IO
+from cleo.io.null_io import NullIO
 from poetry.console.commands.command import Command
 from poetry.console.commands.installer_command import InstallerCommand
+from poetry.console.commands.lock import LockCommand
 from poetry.poetry import Poetry
+from poetry.utils.env.null_env import NullEnv
 
 from poetry_multiverse_plugin.cli.progress import progress
 from poetry_multiverse_plugin.hooks.hook import Hook
@@ -21,6 +24,19 @@ def poetry_target(poetry: Poetry, command: Command) -> Iterator[Command]:
         command.set_poetry(old_poetry)
 
 
+@contextmanager
+def no_install(io: IO) -> Iterator[IO]:
+    if io.input.has_option('lock'):
+        old_value = io.input.option('lock')
+        try:
+            io.input.set_option('lock', True)
+            yield io
+        finally:
+            io.input.set_option('lock', old_value)
+    else:
+        yield io
+
+
 class PreLockHook(Hook):
     command_names = { 'add', 'lock', 'remove', 'update' }
 
@@ -31,12 +47,22 @@ class PreLockHook(Hook):
             return
 
         root = workspace.root
+        root_env = NullEnv(command.env.path, command.env.base)
         with progress(io, 'Preparing workspace...'):
-            lock(root, locked_pool(list(workspace.packages)), env=command.env)
-            with poetry_target(root, command) as cmd:
-                cmd.run(io)
-        
-        command.poetry.set_pool(project_pool(locked=root))
+            lock(root, locked_pool(list(workspace.packages)), env=root_env)
+
+        root.set_pool(project_pool(command.poetry, locked=root))
+        command.set_installer(create_installer(
+            root,
+            root.pool,
+            env=root_env
+        ))
+        with poetry_target(root, command) as cmd:
+            with no_install(io) as lock_io:
+                cmd.execute(NullIO(lock_io.input))
+
+        sources = [] if isinstance(command, LockCommand) else [command.poetry]
+        command.poetry.set_pool(project_pool(*sources, locked=root))
         command.set_installer(create_installer(
             command.poetry,
             command.poetry.pool,

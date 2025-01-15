@@ -16,11 +16,11 @@ class InfoCommand(WorkspaceCommand):
         def format_row(project: Poetry) -> List[str]:
             return [
                 f'<b>{project.package.name}</>',
-                str(project.pyproject_path.parent.relative_to(root.pyproject_path.parent))
+                str(project.pyproject_path.parent.relative_to(workspace.config.root))
             ]
 
         self.table(style='compact') \
-            .set_headers([f'{root.package.name}', str(root.pyproject_path.parent)]) \
+            .set_headers([f'{root.package.name}', str(workspace.config.root)]) \
             .set_rows([format_row(project) for project in projects]) \
             .render()
         return 0

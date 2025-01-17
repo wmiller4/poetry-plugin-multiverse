@@ -1,4 +1,3 @@
-from dataclasses import dataclass, field
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -14,13 +13,19 @@ from poetry_multiverse_plugin.packages import Packages
 from poetry_multiverse_plugin.root import root_project
 
 
-@dataclass
 class Workspace:
-    config: WorkspaceConfiguration
-    context: Poetry
-    disable_cache: bool = field(kw_only=True, default=False)
-    pool: Optional[RepositoryPool] = field(kw_only=True, default=None)
-    root_project: TemporaryDirectory = field(default_factory=TemporaryDirectory)
+    def __init__(
+        self,
+        config: WorkspaceConfiguration,
+        context: Poetry, *,
+        disable_cache: bool = False,
+        pool: Optional[RepositoryPool] = None
+    ) -> None:
+        self.config = config
+        self.context = context
+        self.disable_cache = disable_cache
+        self.pool = pool
+        self.root_project = TemporaryDirectory()
 
     @staticmethod
     def create(

@@ -1,4 +1,4 @@
-from typing import List, Optional, override
+from typing import List, Optional
 
 from cleo.io.io import IO
 from cleo.io.null_io import NullIO
@@ -16,7 +16,6 @@ class LockedRepository(Repository):
         super().__init__(parent.name, parent.packages)
         self.pool = pool
     
-    @override
     def find_links_for_package(self, package: Package) -> List[Link]:
         if links := super().find_links_for_package(package):
             return links

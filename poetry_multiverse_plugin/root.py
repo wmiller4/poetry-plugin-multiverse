@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from poetry.config.config import Config
 from poetry.core.constraints.version.parser import parse_single_constraint
 from poetry.core.packages.project_package import ProjectPackage
 from poetry.packages.locker import Locker
@@ -9,8 +10,9 @@ from poetry.factory import Factory
 from poetry_multiverse_plugin.dependencies import Dependencies
 
 
-def root_project(*projects: Poetry, path: Path, context: Poetry) -> Poetry:
+def root_project(*projects: Poetry, path: Path) -> Poetry:
     aggregate_project = ProjectPackage('workspace', '0.0.0')
+    local_config = {}
 
     py_versions = parse_single_constraint('*')
     for project in projects:
@@ -24,9 +26,8 @@ def root_project(*projects: Poetry, path: Path, context: Poetry) -> Poetry:
     pyproject.write_text(Factory.create_pyproject_from_package(aggregate_project).as_string())
     return Poetry(
         file=pyproject,
-        local_config=context.local_config,
+        local_config=local_config,
         package=aggregate_project,
-        locker=Locker(path / 'workspace.lock', context.local_config),
-        config=context.config,
-        disable_cache=context.disable_cache
+        locker=Locker(path / 'workspace.lock', local_config),
+        config=Config.create()
     )

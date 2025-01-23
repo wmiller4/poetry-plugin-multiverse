@@ -10,7 +10,6 @@ class InfoCommand(WorkspaceCommand):
     description = 'Describe the multiverse workspace.'
 
     def handle_workspace(self, workspace: Workspace) -> int:
-        root = workspace.root
         projects = sorted(workspace.projects, key=lambda p: p.package.name)
 
         def format_row(project: Poetry) -> List[str]:
@@ -20,7 +19,7 @@ class InfoCommand(WorkspaceCommand):
             ]
 
         self.table(style='compact') \
-            .set_headers([f'{root.package.name}', str(workspace.config.root)]) \
+            .set_headers(['Workspace', str(workspace.config.root)]) \
             .set_rows([format_row(project) for project in projects]) \
             .render()
         return 0

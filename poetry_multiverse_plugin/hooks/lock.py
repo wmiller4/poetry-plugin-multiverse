@@ -6,7 +6,6 @@ from poetry.console.commands.command import Command
 from poetry.console.commands.installer_command import InstallerCommand
 from poetry.console.commands.lock import LockCommand
 from poetry.poetry import Poetry
-from poetry.utils.env.null_env import NullEnv
 
 from poetry_multiverse_plugin.cli.progress import progress
 from poetry_multiverse_plugin.hooks.hook import Hook
@@ -47,15 +46,13 @@ class PreLockHook(Hook):
             return
 
         root = workspace.root
-        root_env = NullEnv(command.env.path, command.env.base)
         with progress(io, 'Preparing workspace...'):
-            lock(root, locked_pool(list(workspace.packages)), env=root_env)
+            lock(root, locked_pool(list(workspace.packages)))
 
         root.set_pool(workspace_pool(*workspace.projects, locked=root))
         command.set_installer(create_installer(
             root,
-            root.pool,
-            env=root_env
+            root.pool
         ))
         with poetry_target(root, command) as cmd:
             with no_install(io) as lock_io:

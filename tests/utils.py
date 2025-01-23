@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import List, Optional, Type
 
+from cleo.commands.command import Command as CleoCommand
 from cleo.events.console_command_event import ConsoleCommandEvent
 from cleo.events.event import Event
 from cleo.events.event_dispatcher import EventDispatcher
@@ -17,7 +18,7 @@ from poetry.repositories import RepositoryPool
 from poetry.utils.env.mock_env import MockEnv
 
 
-def set_env(command: Command):
+def set_env(command: CleoCommand):
     if not isinstance(command, EnvCommand) or isinstance(command, SelfCommand):
         return
     if command._env is not None:
@@ -49,8 +50,8 @@ class MockApplication(Application):
 
 def command(
     poetry: Poetry,
-    factory: Type[Command], *,
-    deps: Optional[List[Type[Command]]] = None
+    factory: Type[CleoCommand], *,
+    deps: Optional[List[Type[CleoCommand]]] = None
 ) -> CommandTester:
     app = MockApplication(poetry)
     for dep in deps or []:
@@ -61,7 +62,8 @@ def command(
     set_env(cmd)
     if isinstance(cmd, InstallerCommand):
         Application.configure_installer_for_command(cmd, tester.io)
-    cmd.set_poetry(poetry)
+    if isinstance(cmd, Command):
+        cmd.set_poetry(poetry)
     return tester
 
 

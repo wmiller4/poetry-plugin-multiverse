@@ -1,13 +1,16 @@
 from contextlib import _GeneratorContextManager, contextmanager
 from dataclasses import dataclass
+from pathlib import Path
 from queue import Queue
 from threading import Thread
 from typing import Callable, Iterator, Optional
+
+from cleo.commands.command import Command
 from cleo.io.io import IO
-from poetry.console.commands.installer_command import InstallerCommand
 
 from poetry_multiverse_plugin.cli.progress import progress
 from poetry_multiverse_plugin.cli.status import OutputQueue, StatusConfig, WorkspaceStatus
+from poetry_multiverse_plugin.config import WorkspaceConfiguration
 from poetry_multiverse_plugin.workspace import Workspace
 
 
@@ -40,10 +43,16 @@ class CliUtils:
             io_thread.join()
 
 
-class WorkspaceCommand(InstallerCommand):
+class WorkspaceCommand(Command):
+    def _workspace(self) -> Optional[Workspace]:
+        path = self.io.input.option('directory')
+        if config := WorkspaceConfiguration.find(Path(path) if path else Path.cwd()):
+            return Workspace(config)
+        return None
+
     @property
     def cli(self) -> CliUtils:
-        workspace = Workspace.create(self.poetry)
+        workspace = self._workspace()
         assert workspace is not None
         return CliUtils(workspace, self.io)
 
@@ -51,8 +60,9 @@ class WorkspaceCommand(InstallerCommand):
         raise NotImplementedError
     
     def handle(self) -> int:
-        workspace = Workspace.create(self.poetry, pool=self.poetry.pool)
-        if not workspace:
-            self.line_error('Unable to locate workspace root')
-            return 1
-        return self.handle_workspace(workspace)
+        if workspace := self._workspace():
+            return self.handle_workspace(workspace)
+
+        self.line_error('Unable to locate workspace root')
+        return 1
+

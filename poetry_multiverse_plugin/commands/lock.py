@@ -30,9 +30,9 @@ multiple projects are locked to the same version.
         root = workspace.root
 
         with self.cli.progress('Locking workspace...'):
-            pool = locked_pool(list(workspace.packages)) if self.option('no-update', True) else \
+            pool = locked_pool(list(workspace.packages)) if self.option('no-update') else \
                 workspace_pool(*workspace.projects)
-            return_code = lock(root, pool, env=self.env)
+            return_code = lock(root, pool)
             if return_code != 0:
                 self.io.write_error_line('<error>Failed to lock workspace!</>')
                 return return_code
@@ -42,7 +42,7 @@ multiple projects are locked to the same version.
 
             def run(project: Poetry) -> int:
                 status(project).update('Locking...')
-                return lock(project, workspace_locked_pool, env=self.env)
+                return lock(project, workspace_locked_pool)
 
             with ThreadPoolExecutor() as executor:
                 jobs = {

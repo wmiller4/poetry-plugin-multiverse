@@ -3,8 +3,8 @@ from cleo.events.console_command_event import ConsoleCommandEvent
 from cleo.io.io import IO
 from poetry.console.commands.command import Command
 
-from poetry_multiverse_plugin.hooks.hook import Hook, HookContext
-from poetry_multiverse_plugin.workspace import Workspace
+from poetry_plugin_multiverse.hooks.hook import Hook, HookContext
+from poetry_plugin_multiverse.workspace import Workspace
 from tests.conftest import ProjectFactory
 from tests.utils import command
 

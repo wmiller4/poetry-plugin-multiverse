@@ -3,7 +3,7 @@ from pathlib import Path
 from fastjsonschema import JsonSchemaException
 import pytest
 
-from poetry_multiverse_plugin.config import WorkspaceConfiguration
+from poetry_plugin_multiverse.config import WorkspaceConfiguration
 
 
 def make_project(path: Path):

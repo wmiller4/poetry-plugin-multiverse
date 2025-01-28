@@ -1,9 +1,9 @@
 from cleo.io.io import IO
 from poetry.console.commands.command import Command
 
-from poetry_multiverse_plugin.hooks.hook import Hook
-from poetry_multiverse_plugin.publish import PublishedDependencies
-from poetry_multiverse_plugin.workspace import Workspace
+from poetry_plugin_multiverse.hooks.hook import Hook
+from poetry_plugin_multiverse.publish import PublishedDependencies
+from poetry_plugin_multiverse.workspace import Workspace
 
 
 class PreBuildHook(Hook):

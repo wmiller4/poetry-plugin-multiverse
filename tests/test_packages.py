@@ -1,4 +1,4 @@
-from poetry_multiverse_plugin.packages import Packages
+from poetry_plugin_multiverse.packages import Packages
 from tests import utils
 from poetry.core.packages.package import Package
 

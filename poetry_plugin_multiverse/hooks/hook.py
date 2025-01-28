@@ -6,7 +6,7 @@ from cleo.events.console_event import ConsoleEvent
 from cleo.io.io import IO
 from poetry.console.commands.command import Command
 
-from poetry_multiverse_plugin.workspace import Workspace
+from poetry_plugin_multiverse.workspace import Workspace
 
 
 class Hook:

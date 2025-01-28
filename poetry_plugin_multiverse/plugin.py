@@ -8,15 +8,15 @@ from cleo.events.event_dispatcher import EventDispatcher
 from poetry.console.application import Application
 from poetry.plugins.application_plugin import ApplicationPlugin
 
-from poetry_multiverse_plugin.commands.check import CheckCommand
-from poetry_multiverse_plugin.commands.info import InfoCommand
-from poetry_multiverse_plugin.commands.lock import LockCommand
-from poetry_multiverse_plugin.commands.run import RunCommand
-from poetry_multiverse_plugin.commands.show import ShowCommand
-from poetry_multiverse_plugin.errors import error_boundary
-from poetry_multiverse_plugin.hooks.build import PreBuildHook
-from poetry_multiverse_plugin.hooks.hook import Hook, HookContext
-from poetry_multiverse_plugin.hooks.lock import PreLockHook, PostLockHook
+from poetry_plugin_multiverse.commands.check import CheckCommand
+from poetry_plugin_multiverse.commands.info import InfoCommand
+from poetry_plugin_multiverse.commands.lock import LockCommand
+from poetry_plugin_multiverse.commands.run import RunCommand
+from poetry_plugin_multiverse.commands.show import ShowCommand
+from poetry_plugin_multiverse.errors import error_boundary
+from poetry_plugin_multiverse.hooks.build import PreBuildHook
+from poetry_plugin_multiverse.hooks.hook import Hook, HookContext
+from poetry_plugin_multiverse.hooks.lock import PreLockHook, PostLockHook
 
 
 @dataclass

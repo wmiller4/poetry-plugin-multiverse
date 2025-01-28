@@ -5,7 +5,7 @@ from poetry.core.packages.package import Package
 from poetry.poetry import Poetry
 from poetry.repositories.repository_pool import RepositoryPool
 
-from poetry_multiverse_plugin.dependencies import Record
+from poetry_plugin_multiverse.dependencies import Record
 
 
 @dataclass

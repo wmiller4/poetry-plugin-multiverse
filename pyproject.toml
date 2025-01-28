@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "poetry-multiverse-plugin"
+name = "poetry-plugin-multiverse"
 version = "0.0.0"
 description = "Workspace support for Poetry"
 authors = ["Wes Miller <37603175+wmiller4@users.noreply.github.com>"]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/wmiller4/poetry-multiverse-plugin"
+repository = "https://github.com/wmiller4/poetry-plugin-multiverse"
 homepage = "https://irregular-expressions.net/multiverse"
 documentation = "https://irregular-expressions.net/multiverse"
 classifiers = [
@@ -26,13 +26,13 @@ pytest = "^8.3.4"
 pytest-cov = "^6.0.0"
 
 [tool.poetry.plugins."poetry.application.plugin"]
-multiverse = "poetry_multiverse_plugin.plugin:MultiversePlugin"
+multiverse = "poetry_plugin_multiverse.plugin:MultiversePlugin"
 
 [tool.poe]
 include = "tasks.toml"
 
 [tool.pytest.ini_options]
-addopts = "--cov-report=xml:cov.xml --cov-report term --cov=poetry_multiverse_plugin"
+addopts = "--cov-report=xml:cov.xml --cov-report term --cov=poetry_plugin_multiverse"
 
 [tool.poetry-dynamic-versioning]
 enable = true

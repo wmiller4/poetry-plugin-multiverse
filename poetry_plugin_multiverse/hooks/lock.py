@@ -7,10 +7,10 @@ from poetry.console.commands.installer_command import InstallerCommand
 from poetry.console.commands.lock import LockCommand
 from poetry.poetry import Poetry
 
-from poetry_multiverse_plugin.cli.progress import progress
-from poetry_multiverse_plugin.hooks.hook import Hook
-from poetry_multiverse_plugin.repositories import create_installer, lock, locked_pool, project_pool, workspace_pool
-from poetry_multiverse_plugin.workspace import Workspace
+from poetry_plugin_multiverse.cli.progress import progress
+from poetry_plugin_multiverse.hooks.hook import Hook
+from poetry_plugin_multiverse.repositories import create_installer, lock, locked_pool, project_pool, workspace_pool
+from poetry_plugin_multiverse.workspace import Workspace
 
 
 @contextmanager

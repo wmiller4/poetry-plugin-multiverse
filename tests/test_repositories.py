@@ -1,7 +1,7 @@
 from poetry.core.packages.package import Package
 from poetry.utils.env import NullEnv
 
-from poetry_multiverse_plugin.repositories import lock, locked_pool, project_pool, workspace_pool
+from poetry_plugin_multiverse.repositories import lock, locked_pool, project_pool, workspace_pool
 from tests import utils
 from tests.conftest import ProjectFactory
 

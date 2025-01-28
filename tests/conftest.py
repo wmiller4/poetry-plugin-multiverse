@@ -10,9 +10,9 @@ from poetry.poetry import Poetry
 from poetry.repositories import Repository, RepositoryPool
 import pytest
 
-from poetry_multiverse_plugin.config import MultiverseToml, WorkspaceConfiguration
-from poetry_multiverse_plugin.repositories import PoolFactory
-from poetry_multiverse_plugin.workspace import Workspace
+from poetry_plugin_multiverse.config import MultiverseToml, WorkspaceConfiguration
+from poetry_plugin_multiverse.repositories import PoolFactory
+from poetry_plugin_multiverse.workspace import Workspace
 from tests import utils
 
 

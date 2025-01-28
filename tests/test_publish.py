@@ -1,7 +1,7 @@
 from poetry.core.constraints.version.version import Version
 from poetry.core.packages.package import Package
 
-from poetry_multiverse_plugin.publish import PublishedDependencies
+from poetry_plugin_multiverse.publish import PublishedDependencies
 from tests import utils
 from tests.conftest import ProjectFactory
 

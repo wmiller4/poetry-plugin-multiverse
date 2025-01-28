@@ -7,7 +7,7 @@ from poetry.packages.locker import Locker
 from poetry.poetry import Poetry
 from poetry.factory import Factory
 
-from poetry_multiverse_plugin.dependencies import Dependencies
+from poetry_plugin_multiverse.dependencies import Dependencies
 
 
 def root_project(*projects: Poetry, path: Path) -> Poetry:

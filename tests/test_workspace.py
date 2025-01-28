@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from poetry_multiverse_plugin.workspace import Workspace
+from poetry_plugin_multiverse.workspace import Workspace
 from tests import utils
 from poetry.core.constraints.version.version import Version
 from poetry.core.packages.package import Package

@@ -2,7 +2,7 @@ from asyncio import Future
 from unittest.mock import MagicMock
 import pytest
 
-from poetry_multiverse_plugin.cli.status import ProjectStatus, StatusOutput
+from poetry_plugin_multiverse.cli.status import ProjectStatus, StatusOutput
 
 
 def test_complete_success():

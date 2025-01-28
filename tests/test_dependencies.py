@@ -1,4 +1,4 @@
-from poetry_multiverse_plugin.dependencies import Dependencies
+from poetry_plugin_multiverse.dependencies import Dependencies
 from tests import utils
 from poetry.core.constraints.version.version import Version
 from poetry.core.packages.package import Package

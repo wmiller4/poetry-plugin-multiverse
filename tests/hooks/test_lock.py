@@ -2,9 +2,9 @@ from cleo.events.console_command_event import ConsoleCommandEvent
 from poetry.console.commands.lock import LockCommand
 from poetry.core.packages.package import Package
 
-from poetry_multiverse_plugin.commands.lock import LockCommand as WorkspaceLockCommand
-from poetry_multiverse_plugin.hooks.hook import HookContext
-from poetry_multiverse_plugin.hooks.lock import PostLockHook, PreLockHook
+from poetry_plugin_multiverse.commands.lock import LockCommand as WorkspaceLockCommand
+from poetry_plugin_multiverse.hooks.hook import HookContext
+from poetry_plugin_multiverse.hooks.lock import PostLockHook, PreLockHook
 from tests import utils
 from tests.conftest import ProjectFactory
 from tests.utils import command

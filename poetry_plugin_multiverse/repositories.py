@@ -13,7 +13,7 @@ from poetry.repositories.repository_pool import Priority, RepositoryPool
 from poetry.utils.env import Env
 from poetry.utils.env.null_env import NullEnv
 
-from poetry_multiverse_plugin.utils import Singleton
+from poetry_plugin_multiverse.utils import Singleton
 
 
 class LockedRepository(Repository):

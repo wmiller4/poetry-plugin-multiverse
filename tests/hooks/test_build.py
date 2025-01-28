@@ -6,8 +6,8 @@ from poetry.console.commands.version import VersionCommand
 from poetry.core.constraints.version.version import Version
 from poetry.core.packages.dependency import Dependency
 
-from poetry_multiverse_plugin.hooks.build import PreBuildHook
-from poetry_multiverse_plugin.hooks.hook import HookContext
+from poetry_plugin_multiverse.hooks.build import PreBuildHook
+from poetry_plugin_multiverse.hooks.hook import HookContext
 from tests import utils
 from tests.conftest import ProjectFactory
 from tests.utils import command

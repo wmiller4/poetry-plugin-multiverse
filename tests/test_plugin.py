@@ -4,9 +4,9 @@ from cleo.io.io import IO
 from cleo.testers.application_tester import ApplicationTester
 from poetry.console.commands.command import Command
 
-from poetry_multiverse_plugin.hooks.hook import Hook
-from poetry_multiverse_plugin.plugin import PluginConfig
-from poetry_multiverse_plugin.workspace import Workspace
+from poetry_plugin_multiverse.hooks.hook import Hook
+from poetry_plugin_multiverse.plugin import PluginConfig
+from poetry_plugin_multiverse.workspace import Workspace
 from tests.conftest import ProjectFactory
 from tests.utils import MockApplication
 

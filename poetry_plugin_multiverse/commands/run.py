@@ -6,8 +6,8 @@ from typing import List, Optional
 from cleo.helpers import argument, option
 from poetry.poetry import Poetry
 
-from poetry_multiverse_plugin.commands.workspace import WorkspaceCommand
-from poetry_multiverse_plugin.workspace import Workspace
+from poetry_plugin_multiverse.commands.workspace import WorkspaceCommand
+from poetry_plugin_multiverse.workspace import Workspace
 
 
 class RunCommand(WorkspaceCommand):

@@ -6,7 +6,7 @@ from cleo.io.io import IO
 from cleo.io.outputs.output import Output
 from poetry.poetry import Poetry
 
-from poetry_multiverse_plugin.cli.utils import can_overwrite, overwrite
+from poetry_plugin_multiverse.cli.utils import can_overwrite, overwrite
 
 
 ResultT = TypeVar('ResultT')

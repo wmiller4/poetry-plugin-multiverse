@@ -5,10 +5,10 @@ from poetry.console.commands import show
 from poetry.puzzle.exceptions import SolverProblemError
 from poetry.utils.env.null_env import NullEnv
 
-from poetry_multiverse_plugin.commands.workspace import WorkspaceCommand
-from poetry_multiverse_plugin.config import WorkspaceConfiguration
-from poetry_multiverse_plugin.repositories import lock, locked_pool
-from poetry_multiverse_plugin.workspace import Workspace
+from poetry_plugin_multiverse.commands.workspace import WorkspaceCommand
+from poetry_plugin_multiverse.config import WorkspaceConfiguration
+from poetry_plugin_multiverse.repositories import lock, locked_pool
+from poetry_plugin_multiverse.workspace import Workspace
 
 
 class ShowCommand(WorkspaceCommand):

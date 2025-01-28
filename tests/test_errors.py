@@ -1,7 +1,7 @@
 from cleo.io.buffered_io import BufferedIO
 from cleo.io.outputs.output import Verbosity
 
-from poetry_multiverse_plugin.errors import error_boundary
+from poetry_plugin_multiverse.errors import error_boundary
 
 
 def test_error_boundary():

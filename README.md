@@ -12,7 +12,7 @@ Poetry must be running on Python 3.9 or later.
 
 1.  Install the plugin:
     ```
-    poetry self add poetry-multiverse-plugin
+    poetry self add poetry-plugin-multiverse
     ```
 
 2.  Create a Poetry project in the root of your workspace with the following configuration in pyproject.toml:

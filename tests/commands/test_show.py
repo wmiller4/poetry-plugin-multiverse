@@ -1,6 +1,6 @@
 from poetry.core.packages.package import Package
 
-from poetry_multiverse_plugin.commands.show import ShowCommand
+from poetry_plugin_multiverse.commands.show import ShowCommand
 from tests import utils
 from tests.conftest import ProjectFactory
 

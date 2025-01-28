@@ -1,4 +1,4 @@
-from poetry_multiverse_plugin.commands.check import CheckCommand
+from poetry_plugin_multiverse.commands.check import CheckCommand
 from tests.conftest import ProjectFactory
 from tests.utils import command
 from tests import utils

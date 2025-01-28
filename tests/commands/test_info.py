@@ -1,4 +1,4 @@
-from poetry_multiverse_plugin.commands.info import InfoCommand
+from poetry_plugin_multiverse.commands.info import InfoCommand
 from tests.conftest import ProjectFactory
 from tests.utils import command
 

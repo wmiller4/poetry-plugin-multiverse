@@ -8,10 +8,10 @@ from typing import Callable, Iterator, Optional
 from cleo.commands.command import Command
 from cleo.io.io import IO
 
-from poetry_multiverse_plugin.cli.progress import progress
-from poetry_multiverse_plugin.cli.status import OutputQueue, StatusConfig, WorkspaceStatus
-from poetry_multiverse_plugin.config import WorkspaceConfiguration
-from poetry_multiverse_plugin.workspace import Workspace
+from poetry_plugin_multiverse.cli.progress import progress
+from poetry_plugin_multiverse.cli.status import OutputQueue, StatusConfig, WorkspaceStatus
+from poetry_plugin_multiverse.config import WorkspaceConfiguration
+from poetry_plugin_multiverse.workspace import Workspace
 
 
 @dataclass

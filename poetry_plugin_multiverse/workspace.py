@@ -6,11 +6,11 @@ from typing import Iterable, Mapping, Optional
 from poetry.factory import Factory
 from poetry.poetry import Poetry
 
-from poetry_multiverse_plugin.config import WorkspaceConfiguration
-from poetry_multiverse_plugin.dependencies import Dependencies
-from poetry_multiverse_plugin.packages import Packages
-from poetry_multiverse_plugin.repositories import PoolFactory
-from poetry_multiverse_plugin.root import root_project
+from poetry_plugin_multiverse.config import WorkspaceConfiguration
+from poetry_plugin_multiverse.dependencies import Dependencies
+from poetry_plugin_multiverse.packages import Packages
+from poetry_plugin_multiverse.repositories import PoolFactory
+from poetry_plugin_multiverse.root import root_project
 
 
 class Workspace:

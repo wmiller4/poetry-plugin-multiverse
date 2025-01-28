@@ -1,5 +1,5 @@
 import pytest
-from poetry_multiverse_plugin.commands.lock import LockCommand
+from poetry_plugin_multiverse.commands.lock import LockCommand
 from tests.conftest import ProjectFactory
 from tests.utils import command
 from tests import utils

@@ -1,5 +1,5 @@
 import pytest
-from poetry_multiverse_plugin.commands.workspace import WorkspaceCommand
+from poetry_plugin_multiverse.commands.workspace import WorkspaceCommand
 from tests.conftest import ProjectFactory
 from tests.utils import command
 

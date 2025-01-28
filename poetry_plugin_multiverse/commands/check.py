@@ -2,10 +2,10 @@ from typing import List
 from poetry.core.packages.dependency import Dependency
 from poetry.core.packages.package import Package
 
-from poetry_multiverse_plugin.commands.workspace import WorkspaceCommand
-from poetry_multiverse_plugin.dependencies import Dependencies, Record
-from poetry_multiverse_plugin.packages import Packages
-from poetry_multiverse_plugin.workspace import Workspace
+from poetry_plugin_multiverse.commands.workspace import WorkspaceCommand
+from poetry_plugin_multiverse.dependencies import Dependencies, Record
+from poetry_plugin_multiverse.packages import Packages
+from poetry_plugin_multiverse.workspace import Workspace
 
 
 class CheckCommand(WorkspaceCommand):

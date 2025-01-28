@@ -2,9 +2,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from cleo.helpers import option
 from poetry.poetry import Poetry
 
-from poetry_multiverse_plugin.commands.workspace import WorkspaceCommand
-from poetry_multiverse_plugin.repositories import lock, locked_pool, project_pool, workspace_pool
-from poetry_multiverse_plugin.workspace import Workspace
+from poetry_plugin_multiverse.commands.workspace import WorkspaceCommand
+from poetry_plugin_multiverse.repositories import lock, locked_pool, project_pool, workspace_pool
+from poetry_plugin_multiverse.workspace import Workspace
 
 
 class LockCommand(WorkspaceCommand):

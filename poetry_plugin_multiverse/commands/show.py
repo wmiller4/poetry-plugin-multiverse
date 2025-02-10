@@ -3,11 +3,11 @@ from typing import Optional
 
 from poetry.console.commands import show
 from poetry.puzzle.exceptions import SolverProblemError
-from poetry.utils.env.null_env import NullEnv
 
 from poetry_plugin_multiverse.commands.workspace import WorkspaceCommand
 from poetry_plugin_multiverse.config import WorkspaceConfiguration
 from poetry_plugin_multiverse.repositories import lock, locked_pool
+from poetry_plugin_multiverse.root import root_env
 from poetry_plugin_multiverse.workspace import Workspace
 
 
@@ -46,5 +46,5 @@ class ShowCommand(WorkspaceCommand):
         show_command = show.ShowCommand()
         show_command.set_application(self.application)
         show_command.set_poetry(root)
-        show_command.set_env(NullEnv())
+        show_command.set_env(root_env(root))
         return show_command.run(self.io)

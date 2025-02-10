@@ -1,10 +1,12 @@
 from pathlib import Path
 
-from poetry_plugin_multiverse.workspace import Workspace
-from tests import utils
+from poetry.core.constraints.version.parser import parse_constraint
 from poetry.core.constraints.version.version import Version
 from poetry.core.packages.package import Package
+from poetry.factory import Factory
 
+from poetry_plugin_multiverse.workspace import Workspace
+from tests import utils
 from tests.conftest import ProjectFactory
 
 
@@ -41,6 +43,24 @@ def test_non_poetry_parent(tmp_path: Path):
     child = utils.project(tmp_path / 'child')
     workspace = Workspace.create(child) 
     assert workspace is None
+
+
+def test_workspace_python(tmp_path: Path, project: ProjectFactory):
+    (tmp_path / 'child').mkdir()
+    (tmp_path / 'child' / 'pyproject.toml').write_text(
+'''
+[tool.poetry]
+name = "child"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.13"
+''')
+    child = Factory().create_poetry(tmp_path / 'child')
+    workspace = project.workspace(child)
+    assert workspace.root.package.python_constraint.allows_all(parse_constraint('^3.13')) is True
+    assert workspace.root.package.python_constraint.allows_all(parse_constraint('^3.12')) is False
+    assert workspace.root.package.python_constraint.allows_all(parse_constraint('^4')) is False
 
 
 def test_workspace_projects(project: ProjectFactory):

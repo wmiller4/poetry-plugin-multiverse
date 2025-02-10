@@ -11,8 +11,8 @@ from poetry.poetry import Poetry
 from poetry.repositories.repository import Repository
 from poetry.repositories.repository_pool import Priority, RepositoryPool
 from poetry.utils.env import Env
-from poetry.utils.env.null_env import NullEnv
 
+from poetry_plugin_multiverse.root import root_env
 from poetry_plugin_multiverse.utils import Singleton
 
 
@@ -61,7 +61,7 @@ def create_installer(
 ) -> Installer:
     return Installer(
         io or NullIO(),
-        env or NullEnv(),
+        env or root_env(project),
         project.package,
         project.locker,
         pool,

@@ -1,11 +1,18 @@
+import os
 from pathlib import Path
+import platform
 
 from poetry.config.config import Config
 from poetry.core.constraints.version.parser import parse_single_constraint
+from poetry.core.constraints.version.util import constraint_regions
 from poetry.core.packages.project_package import ProjectPackage
+from poetry.core.version.pep440.version import PEP440Version
+from poetry.factory import Factory
 from poetry.packages.locker import Locker
 from poetry.poetry import Poetry
-from poetry.factory import Factory
+from poetry.utils.env.base_env import Env
+from poetry.utils.env.mock_env import MockEnv
+from poetry.utils.env.null_env import NullEnv
 
 from poetry_plugin_multiverse.dependencies import Dependencies
 
@@ -31,3 +38,26 @@ def root_project(*projects: Poetry, path: Path) -> Poetry:
         locker=Locker(path / 'workspace.lock', local_config),
         config=Config.create()
     )
+
+
+def root_env(project: Poetry) -> Env:
+    null_env = NullEnv()
+
+    def mock_env(version: PEP440Version) -> MockEnv:
+        return MockEnv(
+            (version.major, version.minor or 0, version.patch or 0),
+            python_implementation=null_env.python_implementation,
+            platform=null_env.platform,
+            platform_machine=platform.machine(),
+            os_name=os.name,
+        )
+
+    constraint = project.package.python_constraint
+    if constraint.is_empty() or constraint.is_any():
+        return null_env
+    for region in constraint_regions([constraint]):
+        if region.include_min and region.min:
+            return mock_env(region.min)
+        if region.include_max and region.max:
+            return mock_env(region.max)
+    return null_env

@@ -7,7 +7,7 @@ from typing import Iterator, Mapping, Optional
 
 from poetry.core.packages.package import Package
 from poetry.poetry import Poetry
-from poetry.repositories import Repository, RepositoryPool
+from poetry.repositories import RepositoryPool
 import pytest
 
 from poetry_plugin_multiverse.config import MultiverseToml, WorkspaceConfiguration
@@ -62,5 +62,5 @@ def working_dir(path: Path) -> Iterator[Path]:
 @pytest.fixture
 def project(tmp_path: Path) -> Iterator[ProjectFactory]:
     with working_dir(tmp_path):
-        with PoolFactory().override(RepositoryPool([Repository('mock')])) as pool:
+        with PoolFactory().override(RepositoryPool([utils.TestRepository('mock')])) as pool:
             yield ProjectFactory(tmp_path, pool)

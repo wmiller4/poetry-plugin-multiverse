@@ -12,10 +12,19 @@ from poetry.console.commands.command import Command
 from poetry.console.commands.env_command import EnvCommand
 from poetry.console.commands.installer_command import InstallerCommand
 from poetry.console.commands.self.self_command import SelfCommand
+from poetry.core.packages.package import Package
+from poetry.core.packages.utils.link import Link
 from poetry.factory import Factory
 from poetry.poetry import Poetry
-from poetry.repositories import RepositoryPool
+from poetry.repositories import Repository, RepositoryPool
 from poetry.utils.env.mock_env import MockEnv
+
+
+class TestRepository(Repository):
+    def find_links_for_package(self, package: Package) -> List[Link]:
+        package_name = package.name.replace('-', '_')
+        wheel = f'{package_name}-{package.version.to_string()}-py3-none-any.whl'
+        return [Link(f'https://null.irregular-expressions.net/simple/{wheel}')]
 
 
 def set_env(command: CleoCommand):

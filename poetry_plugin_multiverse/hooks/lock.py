@@ -1,15 +1,16 @@
 from contextlib import contextmanager
 from typing import Iterator
+
 from cleo.io.io import IO
 from cleo.io.null_io import NullIO
 from poetry.console.commands.command import Command
 from poetry.console.commands.installer_command import InstallerCommand
-from poetry.console.commands.lock import LockCommand
 from poetry.poetry import Poetry
+from poetry.repositories.repository_pool import Priority
 
 from poetry_plugin_multiverse.cli.progress import progress
 from poetry_plugin_multiverse.hooks.hook import Hook
-from poetry_plugin_multiverse.repositories import create_installer, lock, locked_pool, project_pool, workspace_pool
+from poetry_plugin_multiverse.repositories import create_installer, lock, locked_pool, workspace_pool
 from poetry_plugin_multiverse.workspace import Workspace
 
 
@@ -58,8 +59,9 @@ class PreLockHook(Hook):
             with no_install(io) as lock_io:
                 cmd.execute(NullIO(lock_io.input))
 
-        sources = [] if isinstance(command, LockCommand) else [command.poetry]
-        command.poetry.set_pool(project_pool(*sources, locked=root))
+        command.poetry.set_pool(
+            workspace_pool(command.poetry, locked=root, priority=Priority.EXPLICIT)
+        )
         command.set_installer(create_installer(
             command.poetry,
             command.poetry.pool,

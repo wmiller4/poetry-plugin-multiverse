@@ -6,7 +6,6 @@ from cleo.io.null_io import NullIO
 from poetry.console.commands.command import Command
 from poetry.console.commands.installer_command import InstallerCommand
 from poetry.poetry import Poetry
-from poetry.repositories.repository_pool import Priority
 
 from poetry_plugin_multiverse.cli.progress import progress
 from poetry_plugin_multiverse.hooks.hook import Hook
@@ -48,9 +47,12 @@ class PreLockHook(Hook):
 
         root = workspace.root
         with progress(io, 'Preparing workspace...'):
-            lock(root, locked_pool(list(workspace.packages)))
+            lock(
+                root,
+                locked_pool(*workspace.projects, packages=list(workspace.packages), strict=True)
+            )
 
-        root.set_pool(workspace_pool(*workspace.projects, locked=root))
+        root.set_pool(workspace_pool(*workspace.projects))
         command.set_installer(create_installer(
             root,
             root.pool
@@ -59,9 +61,11 @@ class PreLockHook(Hook):
             with no_install(io) as lock_io:
                 cmd.execute(NullIO(lock_io.input))
 
-        command.poetry.set_pool(
-            workspace_pool(command.poetry, locked=root, priority=Priority.EXPLICIT)
-        )
+        command.poetry.set_pool(locked_pool(
+            command.poetry,
+            packages=root.locker.locked_repository().packages,
+            strict=True
+        ))
         command.set_installer(create_installer(
             command.poetry,
             command.poetry.pool,

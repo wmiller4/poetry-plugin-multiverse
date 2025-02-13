@@ -1,7 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from cleo.helpers import option
 from poetry.poetry import Poetry
-from poetry.repositories.repository_pool import Priority
 
 from poetry_plugin_multiverse.commands.workspace import WorkspaceCommand
 from poetry_plugin_multiverse.repositories import lock, locked_pool, workspace_pool
@@ -31,19 +30,23 @@ multiple projects are locked to the same version.
         root = workspace.root
 
         with self.cli.progress('Locking workspace...'):
-            pool = locked_pool(list(workspace.packages)) if self.option('no-update') else \
+            pool = locked_pool(*workspace.projects, packages=list(workspace.packages), strict=True) if self.option('no-update') else \
                 workspace_pool(*workspace.projects)
             return_code = lock(root, pool)
             if return_code != 0:
                 self.io.write_error_line('<error>Failed to lock workspace!</>')
                 return return_code
-
+        
         with self.cli.status(None, 'Updating') as status:
             def run(project: Poetry) -> int:
                 status(project).update('Locking...')
                 return lock(
                     project,
-                    workspace_pool(project, locked=root, priority=Priority.EXPLICIT)
+                    locked_pool(
+                        project,
+                        packages=root.locker.locked_repository().packages,
+                        strict=True
+                    )
                 )
 
             with ThreadPoolExecutor() as executor:

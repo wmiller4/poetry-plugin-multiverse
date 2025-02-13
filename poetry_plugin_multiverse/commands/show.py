@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Optional
 
 from poetry.console.commands import show
-from poetry.puzzle.exceptions import SolverProblemError
+from poetry.puzzle.provider import IncompatibleConstraintsError
 
 from poetry_plugin_multiverse.commands.workspace import WorkspaceCommand
 from poetry_plugin_multiverse.config import WorkspaceConfiguration
@@ -35,11 +35,11 @@ class ShowCommand(WorkspaceCommand):
 
         root = workspace.root
         try:
-            return_code = lock(root, locked_pool(list(workspace.packages)))
+            return_code = lock(root, locked_pool(*workspace.projects, packages=list(workspace.packages), strict=True))
             if return_code != 0:
                 self.io.write_error_line('<error>Failed to lock workspace!</>')
                 return return_code
-        except SolverProblemError:
+        except IncompatibleConstraintsError:
             self.io.write_error_line('<error>Failed to lock workspace!</>')
             return 1
 

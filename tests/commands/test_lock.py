@@ -4,7 +4,7 @@ from tests.conftest import ProjectFactory
 from tests.utils import command
 from tests import utils
 from poetry.core.packages.package import Package
-from poetry.puzzle.exceptions import SolverProblemError
+from poetry.puzzle.provider import IncompatibleConstraintsError
 
 
 def test_dependencies_conflict(project: ProjectFactory):
@@ -17,16 +17,16 @@ def test_dependencies_conflict(project: ProjectFactory):
 
     project.workspace(p1)
     lock = command(p1, LockCommand)
-    with pytest.raises(SolverProblemError):
+    with pytest.raises(IncompatibleConstraintsError):
         lock.execute()
 
 
 def test_align_versions(project: ProjectFactory):
     project.packages(Package('click', '8.0.9'))
-    p2 = utils.add(project('p2'), 'click=^8')
+    p2 = utils.add(project('p2'), 'click=^8', '--source=mock')
 
     project.packages(Package('click', '8.1.2'))
-    p1 = utils.add(project('p1'), 'click=^8.1')
+    p1 = utils.add(project('p1'), 'click=^8.1', '--source=mock')
 
     project.packages(Package('click', '8.1.4'))
 

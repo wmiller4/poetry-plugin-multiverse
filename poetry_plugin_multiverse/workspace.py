@@ -49,8 +49,6 @@ class Workspace:
     @property
     def projects(self) -> Iterable[Poetry]:
         for project in self.config.project_dirs:
-            if project == self.config.root:
-                continue
             try:
                 project = Factory().create_poetry(
                     project,

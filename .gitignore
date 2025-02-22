@@ -1,5 +1,6 @@
 __pycache__
 .coverage
+.python-version
 .ruff_cache
 cov.xml
 dist

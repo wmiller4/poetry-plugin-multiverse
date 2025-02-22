@@ -72,6 +72,15 @@ def test_workspace_projects(project: ProjectFactory):
     assert projects[0].pyproject_path == child.pyproject_path
 
 
+def test_workspace_projects_root(project: ProjectFactory):
+    child = project()
+    workspace = project.workspace(child)
+
+    projects = list(workspace.projects)
+    assert(len(projects) == 1)
+    assert projects[0].pyproject_path == child.pyproject_path
+
+
 def test_dependencies_multiple(project: ProjectFactory):
     project.packages(
         Package('click', '8.0.9'),

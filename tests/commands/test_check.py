@@ -19,8 +19,8 @@ def test_dependencies_conflict(project: ProjectFactory):
 
     output = check.io.fetch_output()
     assert 'click' in output
-    assert '^7' in output
-    assert '^8' in output
+    assert '^7' in output or '>=7,<8' in output
+    assert '^8' in output or '>=8,<9' in output
 
 
 def test_multiple_versions(project: ProjectFactory):

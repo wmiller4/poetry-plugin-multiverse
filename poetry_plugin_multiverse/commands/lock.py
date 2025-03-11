@@ -1,5 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from cleo.helpers import option
+from poetry.console.commands.lock import LockCommand as PoetryLockCommand
 from poetry.poetry import Poetry
 
 from poetry_plugin_multiverse.commands.workspace import WorkspaceCommand
@@ -7,11 +8,22 @@ from poetry_plugin_multiverse.repositories import lock, locked_pool, workspace_p
 from poetry_plugin_multiverse.workspace import Workspace
 
 
+def explicit_regenerate() -> bool:
+    return any(option.name == 'regenerate' for option in PoetryLockCommand.options)
+
+
 class LockCommand(WorkspaceCommand):
     name = 'workspace lock'
     description = 'Compute dependencies for the multiverse workspace.'
 
     options = [
+        option(
+            "no-update", None, "Deprecated: Reuse packages in project lock files."
+        ),
+        option(
+            "regenerate", None, "Ignore packages in project lock files."
+        )
+    ] if explicit_regenerate() else [
         option(
             "no-update", None, "Reuse packages in project lock files."
         )
@@ -30,8 +42,10 @@ multiple projects are locked to the same version.
         root = workspace.root
 
         with self.cli.progress('Locking workspace...'):
-            pool = locked_pool(*workspace.projects, packages=list(workspace.packages), strict=True) if self.option('no-update') else \
-                workspace_pool(*workspace.projects)
+            should_update = self.option('regenerate') if explicit_regenerate() else \
+                not self.option('no-update')
+            pool = workspace_pool(*workspace.projects) if should_update else \
+                locked_pool(*workspace.projects, packages=list(workspace.packages), strict=True)
             return_code = lock(root, pool)
             if return_code != 0:
                 self.io.write_error_line('<error>Failed to lock workspace!</>')

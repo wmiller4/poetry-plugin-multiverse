@@ -1,10 +1,13 @@
 import pytest
-from poetry_plugin_multiverse.commands.lock import LockCommand
+from poetry_plugin_multiverse.commands.lock import LockCommand, explicit_regenerate
 from tests.conftest import ProjectFactory
 from tests.utils import command
 from tests import utils
 from poetry.core.packages.package import Package
 from poetry.puzzle.provider import IncompatibleConstraintsError
+
+
+REGENERATE = '--regenerate' if explicit_regenerate() else ''
 
 
 def test_dependencies_conflict(project: ProjectFactory):
@@ -23,10 +26,10 @@ def test_dependencies_conflict(project: ProjectFactory):
 
 def test_align_versions(project: ProjectFactory):
     project.packages(Package('click', '8.0.9'))
-    p2 = utils.add(project('p2'), 'click=^8', '--source=mock')
+    p2 = utils.add(project('p2'), 'click=^8')
 
     project.packages(Package('click', '8.1.2'))
-    p1 = utils.add(project('p1'), 'click=^8.1', '--source=mock')
+    p1 = utils.add(project('p1'), 'click=^8.1')
 
     project.packages(Package('click', '8.1.4'))
 
@@ -54,7 +57,7 @@ def test_update_versions(project: ProjectFactory):
 
     project.workspace(p1)
     lock = command(p1, LockCommand)
-    assert lock.execute() == 0
+    assert lock.execute(REGENERATE) == 0
 
     assert p1.locker.locked_repository().search('click') == [
         Package('click', '8.1.4')

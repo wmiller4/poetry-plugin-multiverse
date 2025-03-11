@@ -2,12 +2,15 @@ from cleo.events.console_command_event import ConsoleCommandEvent
 from poetry.console.commands.lock import LockCommand
 from poetry.core.packages.package import Package
 
-from poetry_plugin_multiverse.commands.lock import LockCommand as WorkspaceLockCommand
+from poetry_plugin_multiverse.commands.lock import LockCommand as WorkspaceLockCommand, explicit_regenerate
 from poetry_plugin_multiverse.hooks.hook import HookContext
 from poetry_plugin_multiverse.hooks.lock import PostLockHook, PreLockHook
 from tests import utils
 from tests.conftest import ProjectFactory
 from tests.utils import command
+
+
+REGENERATE = '--regenerate' if explicit_regenerate() else ''
 
 
 def test_lock_disabled(project: ProjectFactory):
@@ -25,7 +28,7 @@ def test_lock_disabled(project: ProjectFactory):
     assert context is not None
 
     context.run(PreLockHook)
-    assert lock.execute() == 0
+    assert lock.execute(REGENERATE) == 0
     context.run(PostLockHook)
 
     assert p1.locker.locked_repository().search('click') == [
@@ -52,7 +55,7 @@ def test_pre_lock_hook(project: ProjectFactory):
     assert context is not None
 
     context.run(PreLockHook)
-    assert lock.execute() == 0
+    assert lock.execute(REGENERATE) == 0
 
     assert p1.locker.locked_repository().search('click') == [
         Package('click', '8.0.9')
@@ -77,7 +80,7 @@ def test_post_lock_hook(project: ProjectFactory):
     context = HookContext.create(ConsoleCommandEvent(lock.command, lock.io))
     assert context is not None
 
-    assert lock.execute() == 0
+    assert lock.execute(REGENERATE) == 0
     context.run(PostLockHook)
 
     assert p1.locker.locked_repository().search('click') == [

@@ -3,7 +3,6 @@ from typing import Iterator, List, Optional
 
 from cleo.io.io import IO
 from cleo.io.null_io import NullIO
-from poetry.core.constraints.version import Version
 from poetry.core.packages.dependency import Dependency
 from poetry.core.packages.package import Package
 from poetry.core.packages.utils.link import Link
@@ -42,19 +41,19 @@ class LockedRepository(Repository):
         if not self.strict:
             return self.upstream.has_package(package)
         return False
-    
-    def search(self, query: str) -> List[Package]:
-        if locked := super().search(query):
+
+    def search(self, *args, **kwargs) -> List[Package]:
+        if locked := super().search(*args, **kwargs):
             return locked
         if not self.strict:
-            return self.upstream.search(query)
+            return self.upstream.search(*args, **kwargs)
         return []
     
     def find_links_for_package(self, package: Package) -> List[Link]:
         return self.upstream.find_links_for_package(package)
     
-    def package(self, name: str, version: Version, extras: Optional[List[str]] = None) -> Package:
-        return self.upstream.package(name, version, extras)
+    def package(self, *args, **kwargs) -> Package:
+        return self.upstream.package(*args, **kwargs)
 
 
 def non_empty_pools(*projects: Poetry) -> Iterator[RepositoryPool]:

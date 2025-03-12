@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "test-v1"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.9"
+poetry-plugin-multiverse = { path = "../.." }
+poetry = "^1.8"
+
+[tool.poetry.group.dev.dependencies]
+test-libs = { path = "../../test-libs" }
+
+[tool.poe]
+include = "../tasks.toml"

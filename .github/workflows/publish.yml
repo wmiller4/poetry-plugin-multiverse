@@ -25,7 +25,9 @@ jobs:
       - name: Set up Poetry
         run: pip install poetry poethepoet poetry-dynamic-versioning[plugin]
       - name: Install
-        run: poetry install --sync
+        run: poetry sync
+      - name: Set version
+        run: poetry dynamic-versioning
       - name: Package project
         run: poetry build
       - name: Publish package distributions to PyPI

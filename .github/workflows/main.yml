@@ -21,8 +21,6 @@ jobs:
     - name: Set up Poetry
       run: pip install poetry poethepoet poetry-dynamic-versioning[plugin]
     - name: Install
-      run: poetry install --sync
-    - name: Lint
-      run: poe lint
-    - name: Test
-      run: poe test
+      run: poetry sync
+    - name: Validate
+      run: poe ci

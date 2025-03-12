@@ -1,0 +1,44 @@
+[executor]
+type = "simple"
+
+[tasks.lint]
+default_item_type = "cmd"
+ignore_fail = "return_non_zero"
+sequence = [
+    "poetry run ruff check",
+    "poetry run pyright"
+]
+
+[tasks.test]
+cmd = "poetry run pytest tests"
+
+[tasks.venv]
+cmd = "poetry env info -p"
+
+[tasks.run-envs]
+uses = { VENV = "venv" }
+cmd = "${VENV}/bin/poetry -C ${PWD}/envs workspace run"
+
+[tasks.update-latest]
+cmd = "poetry -C ${PWD}/envs/latest update poetry"
+
+[tasks.sync-envs]
+ref = "run-envs poetry sync"
+
+[tasks.lint-envs]
+ref = "run-envs poe lint"
+
+[tasks.test-envs]
+ref = "run-envs poe test"
+
+[tasks.ci]
+default_item_type = "ref"
+ignore_fail = "return_non_zero"
+sequence = [
+    "lint",
+    "test",
+    "sync-envs",
+    "update-latest",
+    "lint-envs",
+    "test-envs"
+]

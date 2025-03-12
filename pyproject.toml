@@ -20,22 +20,18 @@ python = "^3.9"
 poetry = ">=1.8,<3"
 
 [tool.poetry.group.dev.dependencies]
-pyright = "^1.1.391"
-ruff = "^0.8.4"
-pytest = "^8.3.4"
-pytest-cov = "^6.0.0"
+test-libs = { path = "test-libs" }
 
 [tool.poetry.plugins."poetry.application.plugin"]
 multiverse = "poetry_plugin_multiverse.plugin:MultiversePlugin"
 
-[tool.poe]
-include = "tasks.toml"
+[tool.pyright]
+pythonVersion = "3.9"
 
 [tool.pytest.ini_options]
 addopts = "--cov-report=xml:cov.xml --cov-report term --cov=poetry_plugin_multiverse"
 
 [tool.poetry-dynamic-versioning]
-enable = true
 bump = true
 
 [build-system]

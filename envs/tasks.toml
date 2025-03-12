@@ -1,0 +1,16 @@
+[executor]
+type = "simple"
+
+[tasks.sync]
+cmd = "poetry sync"
+
+[tasks.lint]
+default_item_type = "cmd"
+ignore_fail = "return_non_zero"
+sequence = [
+    "poetry run ruff check ../../poetry_plugin_multiverse ../../tests",
+    "poetry run pyright -p ../.."
+]
+
+[tasks.test]
+cmd = "poetry run pytest ../../tests"

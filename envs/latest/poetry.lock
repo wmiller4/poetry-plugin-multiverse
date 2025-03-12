@@ -1011,12 +1011,10 @@ name = "poetry"
 version = "2.1.1"
 description = "Python dependency management and packaging made easy."
 optional = false
-python-versions = "<4.0,>=3.9"
+python-versions = ">=3.9,<4.0"
 groups = ["main"]
-files = [
-    {file = "poetry-2.1.1-py3-none-any.whl", hash = "sha256:1d433880bd5b401327ddee789ccfe9ff197bf3b0cd240f0bc7cc99c84d14b16c"},
-    {file = "poetry-2.1.1.tar.gz", hash = "sha256:d82673865bf13d6cd0dacf28c69a89670456d8df2f9e5da82bfb5f833ba00efc"},
-]
+files = []
+develop = false
 
 [package.dependencies]
 build = ">=1.2.1,<2.0.0"
@@ -1043,6 +1041,12 @@ trove-classifiers = ">=2022.5.19"
 virtualenv = ">=20.26.6,<21.0.0"
 xattr = {version = ">=1.0.0,<2.0.0", markers = "sys_platform == \"darwin\""}
 
+[package.source]
+type = "git"
+url = "https://github.com/python-poetry/poetry.git"
+reference = "HEAD"
+resolved_reference = "e49af214a2d98680c6f7cdffd9cefd4e944e310b"
+
 [[package]]
 name = "poetry-core"
 version = "2.1.1"
@@ -1054,6 +1058,23 @@ files = [
     {file = "poetry_core-2.1.1-py3-none-any.whl", hash = "sha256:bc3b0382ab4d00d5d780277fd0aad1580eb4403613b37fc60fec407b5bee1fe6"},
     {file = "poetry_core-2.1.1.tar.gz", hash = "sha256:c1a1f6f00e4254742f40988a8caf665549101cf9991122cd5de1198897768b1a"},
 ]
+
+[[package]]
+name = "poetry-plugin-multiverse"
+version = "0.0.0"
+description = "Workspace support for Poetry"
+optional = false
+python-versions = "^3.9"
+groups = ["main"]
+files = []
+develop = false
+
+[package.dependencies]
+poetry = ">=1.8,<3"
+
+[package.source]
+type = "directory"
+url = "../.."
 
 [[package]]
 name = "pycparser"
@@ -1387,7 +1408,7 @@ ruff = "^0.8.4"
 
 [package.source]
 type = "directory"
-url = "test-libs"
+url = "../../test-libs"
 
 [[package]]
 name = "tomli"
@@ -1732,4 +1753,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "d879db01eeb369277cc461823e6bc033af593703ba876059f3e1dbd1edfae7c1"
+content-hash = "a058802f8509a51592475b46d049f75c15cf40cc4304ed1ca4917835ae3a57d4"

@@ -38,7 +38,16 @@ sequence = [
     "lint",
     "test",
     "sync-envs",
+    "lint-envs",
+    "test-envs"
+]
+
+[tasks.ci-latest]
+default_item_type = "ref"
+ignore_fail = "return_non_zero"
+sequence = [
     "update-latest",
+    "sync-envs",
     "lint-envs",
     "test-envs"
 ]

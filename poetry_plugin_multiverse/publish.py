@@ -26,6 +26,8 @@ class PublishedDependencies:
     def patch_project(self, poetry: Poetry):
         for group_name in poetry.package.dependency_group_names(True):
             group = poetry.package.dependency_group(group_name)
-            for index, dep in enumerate(group.dependencies):
+            dependencies = list(group.dependencies)
+            for dep in dependencies:
                 if published := self(dep):
-                    group.dependencies[index] = published
+                    group.remove_dependency(dep.name)
+                    group.add_dependency(published)

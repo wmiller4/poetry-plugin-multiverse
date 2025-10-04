@@ -7,12 +7,13 @@ from poetry.core.constraints.version.parser import parse_single_constraint
 from poetry.core.constraints.version.util import constraint_regions
 from poetry.core.packages.project_package import ProjectPackage
 from poetry.core.version.pep440.version import PEP440Version
-from poetry.factory import Factory
 from poetry.packages.locker import Locker
 from poetry.poetry import Poetry
 from poetry.utils.env.base_env import Env
 from poetry.utils.env.mock_env import MockEnv
 from poetry.utils.env.null_env import NullEnv
+
+from poetry_plugin_multiverse.compatibility.factory import Factory
 
 
 def root_project(*projects: Poetry, path: Path) -> Poetry:
@@ -29,7 +30,7 @@ def root_project(*projects: Poetry, path: Path) -> Poetry:
             aggregate_project.add_dependency(dep)
 
     pyproject = path / 'workspace.toml'
-    pyproject.write_text(Factory.create_pyproject_from_package(aggregate_project).as_string())
+    pyproject.write_text(Factory.create_legacy_pyproject_from_package(aggregate_project).as_string())
     return Poetry(
         file=pyproject,
         local_config=local_config,

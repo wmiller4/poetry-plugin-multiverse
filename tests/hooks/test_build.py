@@ -10,6 +10,7 @@ from poetry_plugin_multiverse.hooks.build import PreBuildHook
 from poetry_plugin_multiverse.hooks.hook import HookContext
 from tests import utils
 from tests.conftest import ProjectFactory
+from tests.test_publish import add_optional
 from tests.utils import command
 
 
@@ -55,3 +56,27 @@ def test_run_hook(project: ProjectFactory):
     assert dependency.name == p1.package.name
     assert dependency.constraint.allows(Version.from_parts(1, 2, 34)) is True
     assert dependency.constraint.allows(Version.from_parts(1, 2, 33)) is False
+
+
+def test_run_hook_relative_paths(project: ProjectFactory):
+    p1 = project('p1')
+    project.workspace(p1, config={ 'hooks': ['build'] })
+    version = command(p1, VersionCommand)
+    assert version.execute('1.2.34') == 0
+
+    p2 = add_optional(project.workspace(p1), project('p2'), '../p1', 'test')
+    build = command(p2, BuildCommand)
+
+    context = HookContext.create(ConsoleCommandEvent(build.command, build.io))
+    assert context is not None
+    context.run(PreBuildHook)
+    assert build.execute() == 0
+
+    packaged_wheel = list((p2.pyproject_path.parent / 'dist').glob('*.whl'))[0]
+    metadata = pkginfo.get_metadata(str(packaged_wheel))
+    assert metadata is not None
+    dependency = Dependency.create_from_pep_508(metadata.requires_dist[0])
+    assert dependency.name == p1.package.name
+    assert dependency.constraint.allows(Version.from_parts(1, 2, 34)) is True
+    assert dependency.constraint.allows(Version.from_parts(1, 2, 33)) is False
+    assert dependency.in_extras == ['test']

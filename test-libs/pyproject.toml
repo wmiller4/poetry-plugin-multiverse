@@ -4,7 +4,7 @@ version = "0.0.0"
 authors = ["Wes Miller <37603175+wmiller4@users.noreply.github.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 pyright = "^1.1.391"
 ruff = "^0.8.4"
 pytest = "^8.3.4"
